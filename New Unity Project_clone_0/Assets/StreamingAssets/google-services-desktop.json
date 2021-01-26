@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "904156286592",
+    "project_id": "chess-9c5ab",
+    "storage_bucket": "chess-9c5ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904156286592:android:19eb52520011803f486065",
+        "android_client_info": {
+          "package_name": "mcast.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "904156286592-elijj3n1v9fq34f5lm4f1ahnnf9qnib3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4wPqyQZBihm2VpY5o8rHez4uwrMuPUQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "904156286592-elijj3n1v9fq34f5lm4f1ahnnf9qnib3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
