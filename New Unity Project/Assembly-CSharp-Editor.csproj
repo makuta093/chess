@@ -71,7 +71,20 @@
     <Compile Include="Assets\Photon Unity Networking\Editor\PhotonNetwork\ReorderableListResources.cs" />
   </ItemGroup>
   <ItemGroup>
+     <None Include="Assets\Firebase\Editor\FirebaseDatabase_version-6.6.0_manifest.txt" />
      <None Include="Assets\Photon Unity Networking\Editor\PhotonNetwork\Newtonsoft.Json.dll" />
+     <None Include="Assets\Firebase\Editor\FirebaseAuth_v1.1.2_manifest.txt" />
+     <None Include="Assets\PlayServicesResolver\Editor\Google.IOSResolver_v1.2.125.0.dll" />
+     <None Include="Assets\PlayServicesResolver\Editor\Google.JarResolver_v1.2.125.0.dll" />
+     <None Include="Assets\PlayServicesResolver\Editor\play-services-resolver_v1.2.125.0.txt" />
+     <None Include="Assets\Firebase\Editor\StorageDependencies.xml" />
+     <None Include="Assets\Firebase\Editor\AuthDependencies.xml" />
+     <None Include="Assets\Firebase\Editor\AppDependencies.xml" />
+     <None Include="Assets\PlayServicesResolver\Editor\Google.VersionHandler.dll" />
+     <None Include="Assets\PlayServicesResolver\Editor\Google.VersionHandlerImpl_v1.2.125.0.dll" />
+     <None Include="Assets\Firebase\Editor\DatabaseDependencies.xml" />
+     <None Include="Assets\Firebase\Editor\FirebaseStorage_version-6.6.0_manifest.txt" />
+     <None Include="Assets\Firebase\Editor\Firebase.Editor.dll" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.1.5f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -294,8 +307,53 @@
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\15.0\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
+    <Reference Include="Firebase.Editor">
+      <HintPath>Assets\Firebase\Editor\Firebase.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.App">
+      <HintPath>Assets\Firebase\Plugins\Firebase.App.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Auth">
+      <HintPath>Assets\Firebase\Plugins\Firebase.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Database">
+      <HintPath>Assets\Firebase\Plugins\Firebase.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Platform">
+      <HintPath>Assets\Firebase\Plugins\Firebase.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Storage">
+      <HintPath>Assets\Firebase\Plugins\Firebase.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.TaskExtension">
+      <HintPath>Assets\Firebase\Plugins\Firebase.TaskExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.MiniJson">
+      <HintPath>Assets\Firebase\Plugins\Google.MiniJson.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Sharpen">
+      <HintPath>Assets\Firebase\Plugins\Google.Sharpen.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Compat">
+      <HintPath>Assets\Parse\Plugins\dotNet45\Unity.Compat.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Tasks">
+      <HintPath>Assets\Parse\Plugins\dotNet45\Unity.Tasks.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Assets\Photon Unity Networking\Editor\PhotonNetwork\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.IOSResolver_v1.2.125.0">
+      <HintPath>Assets\PlayServicesResolver\Editor\Google.IOSResolver_v1.2.125.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.JarResolver_v1.2.125.0">
+      <HintPath>Assets\PlayServicesResolver\Editor\Google.JarResolver_v1.2.125.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.VersionHandler">
+      <HintPath>Assets\PlayServicesResolver\Editor\Google.VersionHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.VersionHandlerImpl_v1.2.125.0">
+      <HintPath>Assets\PlayServicesResolver\Editor\Google.VersionHandlerImpl_v1.2.125.0.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
       <HintPath>Assets\Plugins\Photon3Unity3D.dll</HintPath>

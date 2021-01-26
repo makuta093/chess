@@ -1,63 +1,33 @@
 {
   "project_info": {
-    "project_number": "404856526744",
-    "firebase_url": "https://gerry-firebase1.firebaseio.com",
-    "project_id": "gerry-firebase1",
-    "storage_bucket": "gerry-firebase1.appspot.com"
+    "project_number": "904156286592",
+    "project_id": "chess-9c5ab",
+    "storage_bucket": "chess-9c5ab.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:404856526744:android:34e667a9140364704cbded",
+        "mobilesdk_app_id": "1:904156286592:android:19eb52520011803f486065",
         "android_client_info": {
-          "package_name": "com.gerry.firebase1"
+          "package_name": "mcast.com"
         }
       },
       "oauth_client": [
         {
-          "client_id": "404856526744-ieaeh6ulqg8ic1nv0k1p98g1f00pb2b8.apps.googleusercontent.com",
+          "client_id": "904156286592-elijj3n1v9fq34f5lm4f1ahnnf9qnib3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCXHvY91SgxEyr_a7dHVglekdZUhaGjhyQ"
+          "current_key": "AIzaSyD4wPqyQZBihm2VpY5o8rHez4uwrMuPUQQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "404856526744-ieaeh6ulqg8ic1nv0k1p98g1f00pb2b8.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:404856526744:android:8c343a0da161b5f84cbded",
-        "android_client_info": {
-          "package_name": "com.gerryfirebase1.app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "404856526744-ieaeh6ulqg8ic1nv0k1p98g1f00pb2b8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCXHvY91SgxEyr_a7dHVglekdZUhaGjhyQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "404856526744-ieaeh6ulqg8ic1nv0k1p98g1f00pb2b8.apps.googleusercontent.com",
+              "client_id": "904156286592-elijj3n1v9fq34f5lm4f1ahnnf9qnib3.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
