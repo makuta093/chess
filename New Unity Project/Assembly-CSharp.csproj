@@ -122,6 +122,7 @@
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\PhotonView.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\InRoomChat.cs" />
     <Compile Include="Assets\scripts\firebase.cs" />
+    <Compile Include="Assets\scripts\chessfirebase.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Firebase\Plugins\link.xml" />
