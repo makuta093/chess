@@ -21,9 +21,9 @@ public class objects
     
     public int POSX;
     public int POSY;
-    public string date;
-    public string shape;
-    public string name;
+    
+    public string PEACE;
+    public string COLOR;
     
    
 }
@@ -47,6 +47,23 @@ public class firebase : MonoBehaviour
     public List<string> name = new List<string>();
     public GameObject dbText, nameInput, xposInput, yposInput, shapeInput;
     public GameObject loginBUTTON;
+    public int Bp1x = 1; public int Bp2x = 2; public int Bp3x = 3; public int Bp4x = 4; public int Bp5x = 5; public int Bp6x = 6; public int Bp7x = 7; public int Bp8x = 8;
+    public int Bp1y = 2; public int Bp2y = 2; public int Bp3y = 2; public int Bp4y = 2; public int Bp5y = 2; public int Bp6y = 2; public int Bp7y = 2; public int Bp8y = 2;
+
+    public int Wp1x = 1; public int Wp2x = 2; public int Wp3x = 3; public int Wp4x = 4; public int Wp5x = 5; public int Wp6x = 6; public int Wp7x = 7; public int Wp8x = 8;
+    public int Wp1y = 2; public int Wp2y = 2; public int Wp3y = 2; public int Wp4y = 2; public int Wp5y = 2; public int Wp6y = 7; public int Wp7y = 7; public int Wp8y = 7;
+
+    public int Br1x = 1; public int Br2x = 8;           public int Wr1x = 1; public int Wr2x = 8;
+    public int Br1y = 1; public int Br2y = 1;           public int Wr1y = 8; public int Wr2y = 8;
+
+    public int Bk1x = 2; public int Bk2x = 7;           public int Wk1x = 2; public int Wk2x = 7;
+    public int Bk1y = 1; public int Bk2y = 1;           public int Wk1y = 8; public int Wk2y = 8;
+
+    public int Bb1x = 3; public int Bb2x = 6;           public int Wb1x = 3; public int Wb2x = 6;
+    public int Bb1y = 1; public int Bb2y = 1;           public int Wb1y = 8; public int Wb2y = 8;
+
+    public int Bqx = 4; public int KingBx = 5;          public int Wqx = 5; public int KingWx = 4;
+    public int Bqy = 1; public int KingBy = 1;          public int Wqy = 8; public int KingWy = 8;
     int numberOfRecords = 0;
     bool usercreated = false;
     bool userloggedin = false;
@@ -118,7 +135,7 @@ public class firebase : MonoBehaviour
     {
         DateTime dt = DateTime.Now;
         Debug.Log(dt.ToString("yyyy-MM-dd"));
-        objects newPlayer = new objects();
+        objects PIECE = new objects();
         string t = shapeInput.GetComponent<InputField>().text;
         
 
@@ -132,17 +149,17 @@ public class firebase : MonoBehaviour
         }
 
         
-        newPlayer.POSX = Convert.ToInt32(xposInput.GetComponent<InputField>().text);
-        newPlayer.POSY = Convert.ToInt32(yposInput.GetComponent<InputField>().text);
-        newPlayer.name = nameInput.GetComponent<InputField>().text;
-        newPlayer.shape = t;
-        newPlayer.date = dt.ToString("yyyy-MM-dd");
+        //newPlayer.POSX = Convert.ToInt32(xposInput.GetComponent<InputField>().text);
+        //newPlayer.POSY = Convert.ToInt32(yposInput.GetComponent<InputField>().text);
+        //newPlayer.name = nameInput.GetComponent<InputField>().text;
+        //newPlayer.shape = t;
+        //newPlayer.date = dt.ToString("yyyy-MM-dd");
         //first sign in
         yield return StartCoroutine(signInToFirebase());
         //I am done from signing in.
         Debug.Log("now signed in" + Time.time);
 
-        string jsonNewPlayer = JsonUtility.ToJson(newPlayer);
+        string jsonNewPlayer = JsonUtility.ToJson(PIECE);
 
         //start the process of adding a player
         yield return StartCoroutine(addDataClass(jsonNewPlayer));
