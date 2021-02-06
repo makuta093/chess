@@ -251,192 +251,224 @@ MonoBehaviour:
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp3:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp4:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp5:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp6:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp7:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bp8:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp3:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp4:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp5:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp6:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp7:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wp8:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Br1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Br2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wr1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wr2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bk1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bk2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wk1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wk2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bb1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bb2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wb1:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wb2:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Bq:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   KingB:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   Wq:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   KingW:
     POSX: 0
     POSY: 0
     name: 
     pieace: 
     color: 0
+    live: 0
   numberOfRecords: 0
   signedin: 0
 --- !u!4 &899617102
@@ -731,6 +763,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1488553990 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6626213348376290350, guid: 2dfbdd2d6122fa248aa94943b3280216, type: 3}
+  m_PrefabInstance: {fileID: 1538638050}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1488553993
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488553990}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &1536345545
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,3 +1062,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1561435231}
   m_CullTransparentMesh: 0
+--- !u!1 &1940610787 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5574791410882302253, guid: 2fb88fe15d25a564c8d94503c8c9d7c1, type: 3}
+  m_PrefabInstance: {fileID: 43044029}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1940610790
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940610787}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

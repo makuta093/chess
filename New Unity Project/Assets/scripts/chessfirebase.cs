@@ -381,6 +381,10 @@ public class chessfirebase : MonoBehaviour
 
             go1.transform.position = location.transform.position;
             go1.transform.localScale = new Vector3(0.5f, 0.5f);
+            
+            BoxCollider2D boxCollider2D = go1.AddComponent<BoxCollider2D>();
+            boxCollider2D.size = new Vector2(1, 1);
+            
         }
 
         if (go1.name == "Wp8")
@@ -1363,12 +1367,7 @@ public class chessfirebase : MonoBehaviour
 
             }
             );
-        //shock absorber
-        /* while (!displaydata)
-         {
-             //the data has NOT YET been saved to snapshot
-             yield return null;
-         }*/
+        
 
         yield return new WaitUntil(() => getdatatask.IsCompleted);
 
@@ -1557,14 +1556,7 @@ public class chessfirebase : MonoBehaviour
                         yield return addColorForm("white");
                         coloradd = true;
                     }
-                    //if (mycolor == "white")
-                    //{
-
-                    //}
-                    //else if (mycolor == "black")
-                    //{
-
-                    //}
+                    
                     yield return null;
                 }
                 else
@@ -1844,5 +1836,17 @@ public class chessfirebase : MonoBehaviour
     void Update()
     {
         Debug.Log(currentPlayerKey);
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+            if (hit.collider != null)
+            {
+                Debug.Log(hit.collider.gameObject.name);
+
+            }
+        }
     }
 }
