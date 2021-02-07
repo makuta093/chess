@@ -17,6 +17,7 @@ using System.IO;
 
 public class chessfirebase : MonoBehaviour
 {
+    public bool MOVED = false;
     public string move ;
     public bool l = false;
     public string too;
@@ -134,8 +135,8 @@ public class chessfirebase : MonoBehaviour
      int Bp1x = 1;  int Bp2x = 2;  int Bp3x = 3;  int Bp4x = 4;  int Bp5x = 5;  int Bp6x = 6;  int Bp7x = 7;  int Bp8x = 8;
      int Bp1y = 2;  int Bp2y = 2;  int Bp3y = 2;  int Bp4y = 2;  int Bp5y = 2;  int Bp6y = 2;  int Bp7y = 2;  int Bp8y = 2;
 
-     int Wp1x = 1;  int Wp2x = 2;  int Wp3x = 3;  int Wp4x = 4;  int Wp5x = 5;  int Wp6x = 6;  int Wp7x = 7;  int Wp8x = 8;
-     int Wp1y = 7;  int Wp2y = 7;  int Wp3y = 7;  int Wp4y = 7;  int Wp5y = 7;  int Wp6y = 7;  int Wp7y = 7;  int Wp8y = 7;
+     int Wp1x = 1;  int Wp2x = 2;  int Wp3x = 3;   int Wp5x = 5;  int Wp6x = 6;  int Wp7x = 7;  int Wp8x = 8; int Wp4y = 7;
+    int Wp1y = 7;  int Wp2y = 7;  int Wp3y = 7;    int Wp5y = 7;  int Wp6y = 7;  int Wp7y = 7;  int Wp8y = 7; int Wp4x = 4;
 
      int Br1x = 1;  int Br2x = 8;  int Wr1x = 1;  int Wr2x = 8;
      int Br1y = 1;  int Br2y = 1;  int Wr1y = 8;  int Wr2y = 8;
@@ -315,7 +316,7 @@ public class chessfirebase : MonoBehaviour
             makeTeams(Wp2);
             Wp3.color = false; Wp3.name = "Wp3"; Wp3.POSX = Wp3x; Wp3.POSY = Wp3y; Wp3.pieace = "Wp"; Wp3.live = true;
             makeTeams(Wp3);
-            Wp4.color = false; Wp4.name = "Wp4"; Wp4.POSX = Wp4x; Wp2.POSY = Wp4y; Wp4.pieace = "Wp"; Wp4.live = true;
+            Wp4.color = false; Wp4.name = "Wp4"; Wp4.POSX = Wp4x; Wp4.POSY = Wp4y; Wp4.pieace = "Wp"; Wp4.live = true;
             makeTeams(Wp4);
             Wp5.color = false; Wp5.name = "Wp5"; Wp5.POSX = Wp5x; Wp5.POSY = Wp5y; Wp5.pieace = "Wp"; Wp5.live = true;
             makeTeams(Wp5);
@@ -409,6 +410,8 @@ public class chessfirebase : MonoBehaviour
 
     IEnumerator addColorForm(string color)
     {
+        move = null;
+        too = null;
         Debug.Log("addColorForm");
 
         co newPlayer = new co();
@@ -1038,8 +1041,8 @@ public class chessfirebase : MonoBehaviour
         Debug.Log("check_if_my_turn");
         foreach (var element in myDataDictionary)
         {
-            Debug.Log(element.Key.ToString());
-            Debug.Log(element.Value.ToString());
+            Debug.Log(element.Key.ToString()+"--"+ element.Value.ToString());
+            
             if (element.Key.ToString() == "Bb1")
             {
                 Bb1.live = bool.Parse(element.Value.ToString());
@@ -1151,17 +1154,17 @@ public class chessfirebase : MonoBehaviour
 
 
 
-            if (element.Key.ToString() == "Bb1")
+            if (element.Key.ToString() == "Wb1")
             {
-                Bb1.live = bool.Parse(element.Value.ToString());
+                Wb1.live = bool.Parse(element.Value.ToString());
             }
-            if (element.Key.ToString() == "Bb1x")
+            if (element.Key.ToString() == "Wb1x")
             {
-                Bb1.POSX = int.Parse(element.Value.ToString());
+                Wb1.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wb1y")
             {
-                Bb1.POSY = int.Parse(element.Value.ToString());
+                Wb1.POSY = int.Parse(element.Value.ToString());
             }
 
             if (element.Key.ToString() == "Wb2")
@@ -1805,6 +1808,10 @@ public class chessfirebase : MonoBehaviour
         Debug.Log(currentPlayerKey);
         if ((myturn == true)&&(make == "eneter"))
         {
+            if (MOVED == false)
+            {
+                move_boxes();
+            }
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -1868,8 +1875,11 @@ public class chessfirebase : MonoBehaviour
         }
     }
 
-    public IEnumerator move_boxes()
-    {//BLACK PAWNS
+    public void move_boxes()
+    {
+        MOVED = true;
+
+        //BLACK PAWNS
         GameObject Bp1OBJ = GameObject.Find("Bp1");
         GameObject Bp1_location = GameObject.Find(Bp1.POSY+","+ Bp1.POSX);
         Bp1OBJ.transform.position = Bp1_location.transform.position;
@@ -2002,7 +2012,7 @@ public class chessfirebase : MonoBehaviour
         GameObject KingWOBJ = GameObject.Find("KingW");
         GameObject KingW_location = GameObject.Find(KingW.POSY + "," + KingW.POSX);
         KingWOBJ.transform.position = KingW_location.transform.position;
-        return null;
+        
     }
 
     public void movell(string move, string too, bool jj)
