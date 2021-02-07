@@ -17,8 +17,16 @@ using System.IO;
 
 public class chessfirebase : MonoBehaviour
 {
+    public string move ;
+    public bool l = false;
+    public string too;
 
-     
+    public string make;
+
+    public bool mycollor;
+    
+    public List<string> locations = new List<string>();
+
     // Start is called before the first frame update
 
     public class co
@@ -143,6 +151,8 @@ public class chessfirebase : MonoBehaviour
 
     public bool fillenemy,fillmine;
 
+    public bool myturn = false;
+
     public string mycolor;
 
     public string checkcolor;
@@ -211,14 +221,14 @@ public class chessfirebase : MonoBehaviour
         reference = FirebaseDatabase.DefaultInstance.RootReference;
         DontDestroyOnLoad(this.gameObject);
         StartCoroutine(signInToFirebase());
-        //StartCoroutine(addPlayerToFirebase());
+        
 
 
     }
 
     public IEnumerator downloadAndSaveImage( string shape)
     {
-        
+        Debug.Log("downloadAndSaveImage");
         Debug.Log(shape);
         string pathToSaveIn = Application.persistentDataPath;
 
@@ -253,26 +263,19 @@ public class chessfirebase : MonoBehaviour
         });
 
         Debug.Log(filename);
-        //if (obj == "Wp8")
-        //{
-        //    Sprite warship = LoadSprite(filename);
-
-        //    GameObject.Find(obj).GetComponent<SpriteRenderer>().sprite = warship;
-        //}
-        //else
-        //{
+        
         yield return new WaitUntil(() => task.IsCompleted);
         
         
         
-        //}
+       
 
         yield return null;
     }
 
     private Sprite LoadSprite(string path)
     {
-        
+        Debug.Log("LoadSprite");
         if (System.IO.File.Exists(path))
         {            
             byte[] bytes = System.IO.File.ReadAllBytes(path);
@@ -286,6 +289,7 @@ public class chessfirebase : MonoBehaviour
 
     public void makePlayers()
     {
+        Debug.Log("makePlayers");
         if (makeing == false)
         {
             Bp1.color = true; Bp1.name = "Bp1"; Bp1.POSX = Bp1x; Bp1.POSY = Bp1y; Bp1.pieace = "Bp"; Bp1.live = true;
@@ -363,7 +367,7 @@ public class chessfirebase : MonoBehaviour
     }
     public void makeTeams(marks a)
     {
-        
+        Debug.Log("makeTeams");
 
         GameObject go1 = new GameObject();
         go1.name = a.name;
@@ -374,6 +378,9 @@ public class chessfirebase : MonoBehaviour
 
             go1.transform.position = location.transform.position;
             go1.transform.localScale = new Vector3(0.5f, 0.5f);
+
+            BoxCollider2D boxCollider2D = go1.AddComponent<BoxCollider2D>();
+            boxCollider2D.size = new Vector2(1, 1);
         }
         else
         {
@@ -402,10 +409,11 @@ public class chessfirebase : MonoBehaviour
 
     IEnumerator addColorForm(string color)
     {
-        
+        Debug.Log("addColorForm");
+
         co newPlayer = new co();
         
-        newPlayer.turn = color;
+        
 
 
         newPlayer.Bp1x = Bp1.POSX; newPlayer.Bp2x = Bp2.POSX; newPlayer.Bp3x= Bp3.POSX; newPlayer.Bp4x= Bp4.POSX; newPlayer.Bp5x= Bp5.POSX; newPlayer.Bp6x= Bp6.POSX; newPlayer.Bp7x= Bp7.POSX; newPlayer.Bp8x= Bp8.POSX;
@@ -432,8 +440,10 @@ public class chessfirebase : MonoBehaviour
         newPlayer.Bqy = Bq.POSY; newPlayer.KingBy = KingB.POSY; newPlayer.Wqy = Wq.POSY; newPlayer.KingWy = KingW.POSY;
         newPlayer.Bq = Bq.live; newPlayer.KingB = KingB.live; newPlayer.Wq = Wq.live; newPlayer.KingW = KingW.live;
 
-    //first sign in
-    yield return StartCoroutine(signInToFirebase());
+
+        newPlayer.turn = color;
+        //first sign in
+        yield return StartCoroutine(signInToFirebase());
         //I am done from signing in.
         Debug.Log("now signed in" + Time.time);
 
@@ -452,6 +462,7 @@ public class chessfirebase : MonoBehaviour
 
     IEnumerator addColor(string datatoinsert)
     {
+        Debug.Log("addColor");
         //create a unique ID
         string newkey = "chess-9c5ab-default-rtdb";
         Debug.Log(newkey);
@@ -462,7 +473,7 @@ public class chessfirebase : MonoBehaviour
 
     IEnumerator updatecolor(string childlabel, string newdata)
     {
-
+        Debug.Log("updatecolor");
         bool dataupdated = false;
         //find the child of player4 that corresponds to playername and set the value to whatever is inside newdata
         reference.Root.SetRawJsonValueAsync(newdata).ContinueWithOnMainThread(
@@ -545,22 +556,2439 @@ public class chessfirebase : MonoBehaviour
 
     }
 
-    public string Check_box(int x, int y,string color)
+    
+
+        IEnumerator createUser()
     {
-        string open = "open";
-        bool colr= false;
-        if(color == "white")
+        Debug.Log("create user");
+        auth = FirebaseAuth.DefaultInstance;
+
+
+
+
+
+        Task createusertask = auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(
+             //created an anonymous inner class inside continueonmainthread which is of type Task
+             createUserTask =>
+             {
+                 //if anything goes wrong
+                 if (createUserTask.IsCanceled)
+                 {
+                     //I pressed escape or cancelled the task
+                     Debug.Log("Sorry, user was not created!");
+                     return;
+                 }
+                 if (createUserTask.IsFaulted)
+                 {
+                     //my internet exploded or firebase exploded or some other error happened here
+                     Debug.Log("Sorry, user was not created!" + createUserTask.Exception);
+
+                     return;
+                 }
+                 //if anything goes wrong, otherwise
+                 Firebase.Auth.FirebaseUser myNewUser = createUserTask.Result;
+                 Debug.Log("Your nice new user is:" + myNewUser.DisplayName + " " + myNewUser.UserId);
+                 //THIS IS WHAT HAPPENS AT THE END OF THE ASYNC TASK
+
+
+             }
+             );
+
+
+
+        //*a better way to wait until the end of the coroutine*//
+        yield return new WaitUntil(() => createusertask.IsCompleted);
+
+
+
+    }
+
+    public IEnumerator CheckIfEmpty()
+    {
+        Debug.Log("CheckIfEmpty");
+        int num = 1;
+        Task numberofrecordstask = reference.GetValueAsync().ContinueWithOnMainThread(
+             getValueTask =>
+             {
+                 if (getValueTask.IsFaulted)
+                 {
+                     Debug.Log("Error getting data " + getValueTask.Exception);
+                 }
+
+                 if (getValueTask.IsCompleted)
+                 {
+                    
+                     DataSnapshot snapshot = getValueTask.Result;
+                     Debug.Log(snapshot.ChildrenCount);
+                     num = (int)snapshot.ChildrenCount;
+                     Debug.Log("total "+num);
+                     
+
+                 }
+
+
+             }
+             );
+       
+
+        
+
+        yield return new WaitUntil(() => numberofrecordstask.IsCompleted);
+        if (num > 2)
         {
-            colr = false;
+            yield return StartCoroutine(clearFirebase());
         }
-        else if(color == "black")
+
+    }
+
+    public IEnumerator clearFirebase()
+    {
+        Debug.Log("clearFirebase");
+        Task removeAllRecords = reference.RemoveValueAsync().ContinueWithOnMainThread(
+            rmAllRecords =>
+            {
+                if (rmAllRecords.IsCompleted)
+                {
+                    Debug.Log("Database clear");
+                }
+            });
+
+        yield return new WaitUntil(() => removeAllRecords.IsCompleted);
+
+    }
+
+    //get the number of records for a child
+    public IEnumerator getNumberOfRecords()
+    {
+        Debug.Log("getNumberOfRecords");
+
+        Task numberofrecordstask = reference.GetValueAsync().ContinueWithOnMainThread(
+             getValueTask =>
+             {
+                 if (getValueTask.IsFaulted)
+                 {
+                     Debug.Log("Error getting data " + getValueTask.Exception);
+                 }
+
+                 if (getValueTask.IsCompleted)
+                 {
+                     DataSnapshot snapshot = getValueTask.Result;
+                     Debug.Log(snapshot.ChildrenCount);
+                     numberOfRecords = (int)snapshot.ChildrenCount;
+                     pl = numberOfRecords;
+
+                 }
+
+
+             }
+             );
+        
+        yield return new WaitUntil(() => numberofrecordstask.IsCompleted);
+
+
+    }
+
+    IEnumerator getMineDataFromFirebase(string childLabel)
+    {
+        Debug.Log("getMineDataFromFirebase");
+        Task getdatatask = reference.Child(childLabel).GetValueAsync().ContinueWithOnMainThread(
+            getValueTask =>
+            {
+                bool displaydata = false;
+                if (getValueTask.IsFaulted)
+                {
+                    Debug.Log("Error getting data " + getValueTask.Exception);
+                }
+
+                if (getValueTask.IsCompleted)
+                {
+                    DataSnapshot snapshot = getValueTask.Result;
+                    Debug.Log(snapshot.Value.ToString());
+
+                    //snapshot object is casted to an instance of its type
+                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
+
+
+
+
+                    Debug.Log("Data received" + Time.time);
+                    displaydata = true;
+                    //    Debug.Log("Data received");
+
+                }
+
+
+            }
+            );
+        
+
+        yield return new WaitUntil(() => getdatatask.IsCompleted);
+
+        
+        yield return StartCoroutine(displayDataMine());
+    }
+
+    IEnumerator displayDataMine()
+    {
+        Debug.Log("displayDataMine");
+        foreach (var element in myDataDictionary)
         {
-            colr = true;
+            Debug.Log(element.Key.ToString() + "<->" + element.Value.ToString());
+            if ((element.Key.ToString() == "PlayerName"))
+            {
+                Debug.Log(element.Value.ToString());
+                currentPlayer.PlayerName = element.Value.ToString();
+
+            }
+            if ((element.Key.ToString() == "color"))
+            {
+                Debug.Log(element.Value.ToString());
+                currentPlayer.color = element.Value.ToString();
+
+            }
+            if ((element.Key.ToString() == "isHisTurn"))
+            {
+                if (element.Value.ToString() == "true")
+                {
+                    currentPlayer.isHisTurn = true;
+                }
+                if (element.Value.ToString() == "false")
+                {
+                    currentPlayer.isHisTurn = false;
+                }
+
+            }
+            yield return new WaitForSeconds(1f);
+        }
+
+        yield return null;
+    }
+
+
+
+    IEnumerator updateDataClass(string childlabel, string newdata)
+    {
+
+        Debug.Log("updateDataClass");
+        //find the child of player4 that corresponds to playername and set the value to whatever is inside newdata
+        Task updateJsonValueTask = reference.Child(childlabel).SetRawJsonValueAsync(newdata).ContinueWithOnMainThread(
+            updJsonValueTask =>
+            {
+                if (updJsonValueTask.IsCompleted)
+                {
+                    // dataupdated = true;
+                }
+
+            });
+
+
+        yield return new WaitUntil(() => updateJsonValueTask.IsCompleted);
+
+
+
+
+    }
+
+    IEnumerator updatecolorDataClass(chessfirebase childlabel, string newdata)
+    {
+        Debug.Log("updatecolorDataClass");
+        string jsonshot = JsonUtility.ToJson(newdata);
+        Debug.Log(newdata);
+        Debug.Log(jsonshot);
+
+
+        //find the child of player4 that corresponds to playername and set the value to whatever is inside newdata
+        Task updateJsonValueTask = reference.Child(childlabel.currentPlayerKey).Child("color").SetRawJsonValueAsync(jsonshot).ContinueWithOnMainThread(
+            
+        updJsonValueTask =>
+            {
+                
+                if (updJsonValueTask.IsCompleted)
+                {
+                    // dataupdated = true;
+                }
+
+            });
+
+
+        yield return new WaitUntil(() => updateJsonValueTask.IsCompleted);
+
+
+
+
+    }
+
+    IEnumerator getEnemyDataFromFirebase(string childLabel)
+    {
+        Debug.Log("getEnemyDataFromFirebase");
+        Task getdatatask = reference.Child(childLabel).GetValueAsync().ContinueWithOnMainThread(
+            getValueTask =>
+            {
+                bool displaydata = false;
+                if (getValueTask.IsFaulted)
+                {
+                    Debug.Log("Error getting data " + getValueTask.Exception);
+                }
+
+                if (getValueTask.IsCompleted)
+                {
+                    DataSnapshot snapshot = getValueTask.Result;
+                    Debug.Log(snapshot.Value.ToString());
+
+                    //snapshot object is casted to an instance of its type
+                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
+
+                    
+
+
+                    Debug.Log("Data received" + Time.time);
+                    displaydata = true;
+                    //    Debug.Log("Data received");
+
+                }
+
+
+            }
+            );
+        
+
+        yield return new WaitUntil(() => getdatatask.IsCompleted);
+
+        //the data has been saved to snapshot here
+        yield return StartCoroutine(displayDataEnemy());
+    }
+
+    IEnumerator displayDataEnemy()
+    {
+        Debug.Log("displayDataEnemy");
+        foreach (var element in myDataDictionary)
+        {
+            Debug.Log(element.Key.ToString() + "<->" + element.Value.ToString());
+            if ((element.Key.ToString() == "PlayerName"))
+            {
+                Debug.Log("Reached");
+                otherPlayer.PlayerName = element.Value.ToString();
+
+            }
+            if ((element.Key.ToString() == "color"))
+            {
+                Debug.Log("Reached");
+                otherPlayer.color = element.Value.ToString();
+
+            }
+            if ((element.Key.ToString() == "isHisTurn"))
+            {
+                if (element.Value.ToString() == "true")
+                {
+                    otherPlayer.isHisTurn = true;
+                }
+                if (element.Value.ToString() == "false")
+                {
+                    otherPlayer.isHisTurn = false;
+                }
+
+            }
+            yield return new WaitForSeconds(1f);
+        }
+
+        yield return null;
+    }
+
+    IEnumerator getDataFromFirebase(string childLabel)
+    {
+        Debug.Log("getDataFromFirebase");
+        Task getdatatask = reference.Child(childLabel).GetValueAsync().ContinueWithOnMainThread(
+            getValueTask =>
+            {
+                if (getValueTask.IsFaulted)
+                {
+                    Debug.Log("Error getting data " + getValueTask.Exception);
+                }
+
+                if (getValueTask.IsCompleted)
+                {
+                    DataSnapshot snapshot = getValueTask.Result;
+                    Debug.Log(snapshot.Value.ToString());
+
+                    //snapshot object is casted to an instance of its type
+                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
+
+
+                    //    Debug.Log("Data received");
+
+                }
+
+
+            }
+            );
+        
+
+        yield return new WaitUntil(() => getdatatask.IsCompleted);
+
+        //the data has been saved to snapshot here
+        yield return StartCoroutine(displayData());
+    }
+
+    IEnumerator displayData()
+    {
+        Debug.Log("displayData");
+        foreach (var element in myDataDictionary)
+        {
+            Debug.Log(element.Key.ToString() + "<->" + element.Value.ToString());
+            
+            yield return new WaitForSeconds(1f);
+        }
+
+        yield return null;
+    }
+
+    public IEnumerator getOtherPlayerKey(Player otherPlayer, chessfirebase g)
+    {
+        Debug.Log("getOtherPlayerKey");
+        Task getotherplayer = reference.GetValueAsync().ContinueWithOnMainThread(
+            getOtherPlayerTask =>
+            {
+                if (getOtherPlayerTask.IsFaulted)
+                {
+                    Debug.Log("Error getting data " + getOtherPlayerTask.Exception);
+                }
+                if (getOtherPlayerTask.IsCompleted)
+                {
+                    DataSnapshot snapshot = getOtherPlayerTask.Result;
+                    
+                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
+
+
+                }
+            }
+
+            );
+
+        //wait until I'm done.
+        yield return new WaitUntil(() => getotherplayer.IsCompleted);
+        //all the data inside mydatadictionary
+        //this gets me the second key (which is what I want)
+
+        foreach (var element in myDataDictionary)
+        {
+            if (!(g.currentPlayerKey == element.Key.ToString()))
+            {
+
+                g.enemyPlayerKey = element.Key.ToString();
+            }
+        }
+
+
+        //register shots listener
+
+
+        DatabaseReference enemyshotReference = reference.Child(g.enemyPlayerKey).Child("Shots");
+        DatabaseReference myshotReference = reference.Child(g.currentPlayerKey).Child("Shots");
+
+        
+
+    }
+
+    public IEnumerator check_if_turn()
+    {
+        Debug.Log("check_if_turn");
+        bool displaydata = false;
+
+        reference.GetValueAsync().ContinueWithOnMainThread(
+            getValueTask =>
+            {
+
+
+                if (getValueTask.IsFaulted)
+                {
+                    Debug.Log("Error getting data " + getValueTask.Exception);
+                }
+
+                if (getValueTask.IsCompleted)
+                {
+                    DataSnapshot snapshot = getValueTask.Result;
+                    Debug.Log(snapshot.Value.ToString());
+
+                    //snapshot object is casted to an instance of its type
+
+
+                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
+
+
+                    
+                    displaydata = true;
+                }
+
+
+            }
+            );
+        //shock absorber
+        while (!displaydata)
+        {
+            //the data has NOT YET been saved to snapshot
+            yield return null;
+
         }
         
-        if((x == Bp1.POSX) &&(y == Bp1.POSY))
+        yield return StartCoroutine(check_if_my_turn());
+    }
+
+    public IEnumerator check_if_my_turn()
+    {
+        Debug.Log("check_if_my_turn");
+        foreach (var element in myDataDictionary)
         {
-            if(Bp1.color == colr)
+            Debug.Log(element.Key.ToString());
+            Debug.Log(element.Value.ToString());
+            if (element.Key.ToString() == "Bb1")
+            {
+                Bb1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bb1x")
+            {
+                Bb1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bb1y")
+            {
+                Bb1.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Bb2")
+            {
+                Bb2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bb2x")
+            {
+                Bb2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bb2y")
+            {
+                Bb2.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Bk2")
+            {
+                Bk2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bk2x")
+            {
+                Bk2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bk2y")
+            {
+                Bk2.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bk1")
+            {
+                Bk1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bk1x")
+            {
+                Bk1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bk1y")
+            {
+                Bk1.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Br2")
+            {
+                Br2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Br2x")
+            {
+                Br2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Br2y")
+            {
+                Br2.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Br1")
+            {
+                Br1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Br1x")
+            {
+                Br1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Br1y")
+            {
+                Br1.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bq")
+            {
+                Bq.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bqx")
+            {
+                Bq.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bqy")
+            {
+                Bq.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "KingB")
+            {
+                KingB.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "KingBx")
+            {
+                KingB.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "KingBy")
+            {
+                KingB.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+
+            if (element.Key.ToString() == "Bb1")
+            {
+                Bb1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bb1x")
+            {
+                Bb1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wb1y")
+            {
+                Bb1.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Wb2")
+            {
+                Wb2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wb2x")
+            {
+                Wb2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wb2y")
+            {
+                Wb2.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Wk2")
+            {
+                Wk2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wk2x")
+            {
+                Wk2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wk2y")
+            {
+                Wk2.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wk1")
+            {
+                Wk1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wk1x")
+            {
+                Wk1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wk1y")
+            {
+                Wk1.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wr2")
+            {
+                Wr2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wr2x")
+            {
+                Wr2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wr2y")
+            {
+                Wr2.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wr1")
+            {
+                Wr1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wr1x")
+            {
+                Wr1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wr1y")
+            {
+                Wr1.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wq")
+            {
+                Wq.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wqx")
+            {
+                Wq.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wqy")
+            {
+                Wq.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "KingW")
+            {
+                KingW.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "KingWx")
+            {
+                KingW.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "KingWy")
+            {
+                KingW.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bp1")
+            {
+                Wp1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp1x")
+            {
+                Wp1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp1y")
+            {
+                Wp1.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Bp2")
+            {
+                Wp2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp2x")
+            {
+                Wp2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp2y")
+            {
+                Wp2.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Bp3")
+            {
+                Wp3.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp3x")
+            {
+                Wp3.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp3y")
+            {
+                Wp3.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bp4")
+            {
+                Wp4.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp4x")
+            {
+                Wp4.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp4y")
+            {
+                Wp4.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bp5")
+            {
+                Wp5.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp5x")
+            {
+                Wp5.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp5y")
+            {
+                Wp5.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bp6")
+            {
+                Wp6.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp6x")
+            {
+                Wp6.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp6y")
+            {
+                Wp6.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bp7")
+            {
+                Wp7.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp7x")
+            {
+                Wp7.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp7y")
+            {
+                Wp7.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Bp8")
+            {
+                Wp8.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp8x")
+            {
+                Wp8.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Bp8y")
+            {
+                Wp8.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+
+            if (element.Key.ToString() == "Wp1")
+            {
+                Wp1.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp1x")
+            {
+                Wp1.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp1y")
+            {
+                Wp1.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Wp2")
+            {
+                Wp2.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp2x")
+            {
+                Wp2.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp2y")
+            {
+                Wp2.POSY = int.Parse(element.Value.ToString());
+            }
+
+            if (element.Key.ToString() == "Wp3")
+            {
+                Wp3.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp3x")
+            {
+                Wp3.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp3y")
+            {
+                Wp3.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wp4")
+            {
+                Wp4.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp4x")
+            {
+                Wp4.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp4y")
+            {
+                Wp4.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wp5")
+            {
+                Wp5.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp5x")
+            {
+                Wp5.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp5y")
+            {
+                Wp5.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wp6")
+            {
+                Wp6.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp6x")
+            {
+                Wp6.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp6y")
+            {
+                Wp6.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wp7")
+            {
+                Wp7.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp7x")
+            {
+                Wp7.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp7y")
+            {
+                Wp7.POSY = int.Parse(element.Value.ToString());
+            }
+
+
+            if (element.Key.ToString() == "Wp8")
+            {
+                Wp8.live = bool.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp8x")
+            {
+                Wp8.POSX = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "Wp8y")
+            {
+                Wp8.POSY = int.Parse(element.Value.ToString());
+            }
+            if (element.Key.ToString() == "turn")
+            {
+                Debug.Log("trun");
+                if (element.Value.ToString() == currentPlayer.color)
+                {
+                    Debug.Log("enter");
+                    make = "eneter";
+                    myturn = true;
+                }
+                else
+                {
+                    Debug.Log("false");
+                    make = "false";
+                    myturn = false;
+                }
+            }
+            new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);
+        }
+
+        yield return null;
+    }
+
+    public IEnumerator BeginGame()
+    {
+
+
+        Debug.Log("game begin");
+
+        {
+            yield return addPlayerToFirebase();
+            
+        }
+        
+        if (starts)
+        {
+            currentPlayer.isHisTurn = true;
+            while (true)
+            {
+
+                if (fillenemy == false)
+                {
+                    if (fillmine == false)
+                    {
+                        yield return getMineDataFromFirebase(currentPlayerKey);
+                        fillmine = true;
+                    }
+                    if (fillmine == true)
+                        testbutton.SetActive(true);
+                        yield return getEnemyDataFromFirebase(enemyPlayerKey);
+                        
+                    fillenemy = true;
+                }
+
+                if (currentPlayer.isHisTurn)
+                {
+                    Debug.Log("my turn!");
+                    turn = 1;
+                    if(coloradd == false)
+                    {
+                        yield return addColorForm("white");
+                        coloradd = true;
+                    }
+
+                    StartCoroutine(check_if_turn());
+
+                    yield return null;
+                }
+                else
+                {
+                    Debug.Log("their turn!");
+                    yield return null;
+                }
+
+
+            }
+        }
+        else
+        {
+            while (true)
+            {
+
+                if (currentPlayer.isHisTurn)
+                {
+                    if (fillenemy == false)
+                    {
+                        if (fillmine == false) {
+                            yield return getMineDataFromFirebase(currentPlayerKey);
+                            fillmine = true;
+                        } if(fillmine == true)
+                        yield return getEnemyDataFromFirebase(enemyPlayerKey);
+                        fillenemy = true;
+                    }
+
+                    Debug.Log("nmy turn!");
+                    turn = 2;
+                    StartCoroutine(check_if_turn());
+                    yield return null;
+                }
+                else
+                {
+                    Debug.Log("ntheir turn!");
+                    yield return null;
+                }
+
+
+            }
+        }
+
+
+
+        yield return null;
+
+    }
+
+    IEnumerator waitForOtherPlayer()
+    {
+        Debug.Log("wait for other player");
+        yield return getNumberOfRecords();
+        playercounter = numberOfRecords;
+
+        while (playercounter < 2)
+        {
+            //first player to join starts
+            starts = true;
+
+            Debug.Log("Waiting for other player");
+            yield return getNumberOfRecords();
+            playercounter = numberOfRecords;
+
+
+            //lobby
+        }
+        //if another player joins the game can begin
+        Player otherPlayer = new Player();
+        //I need to get the key of the OTHER player
+
+        yield return getOtherPlayerKey(otherPlayer, this);
+
+        //I now have the other player's key.  Let's randomly choose whose turn is next. 
+        Debug.Log("other player has joined");
+
+        // session.isMyTurn = true;
+
+
+
+
+
+
+        yield return null;
+    }
+
+
+
+    IEnumerator addPlayerToFirebase()
+    {
+        if (myturn == false)
+        {
+            Debug.Log("add Player To Firebase");
+            yield return initFirebase();
+            currentPlayer = new Player();
+
+
+
+            currentPlayer.PlayerName = "P" + pl;
+            Debug.Log(currentPlayer.PlayerName);
+            currentPlayer.isHisTurn = true;
+            Debug.Log(currentPlayer.isHisTurn);
+            if (pl == 0)
+            {
+                checkcolor = "white";
+            }
+            else if (pl == 1)
+            {
+                checkcolor = "black";
+            }
+            currentPlayer.color = checkcolor;
+            Debug.Log(currentPlayer.color);
+
+
+
+
+            //yield return dbScript.clearFirebase();
+
+            myturn = true;
+            yield return addDataClassplayer(JsonUtility.ToJson(currentPlayer), this);
+        }
+        yield return waitForOtherPlayer();
+
+
+
+    }
+
+
+    public IEnumerator addDataClass(string datatoinsert, chessfirebase g)
+    {
+        if (star == false)
+        {
+            Debug.Log("add DataClass");
+            //create a unique ID
+            string newkey = reference.Push().Key;
+            Debug.Log(newkey);
+            //the key for the current player
+            g.currentPlayerKey = newkey;
+            //Update the unique key with the data I want to insert
+            star = true;
+            yield return StartCoroutine(updateDataClass(newkey, datatoinsert));
+        }
+    }
+
+    public IEnumerator addDataClassplayer(string datatoinsert, chessfirebase g)
+    {
+        if (star == false)
+        {
+            Debug.Log("add DataClass");
+            //create a unique ID
+            string newkey = reference.Push().Key;
+            Debug.Log(newkey);
+            myname = newkey;
+            //the key for the current player
+            g.currentPlayerKey = newkey;
+            //Update the unique key with the data I want to insert
+            star = true;
+            yield return StartCoroutine(updateDataClass(newkey, datatoinsert));
+        }
+    }
+
+
+    
+
+    IEnumerator addDataClass(string datatoinsert , string name)
+    {
+        //create a unique ID
+        
+        yield return StartCoroutine(updateDataClass(name, datatoinsert));
+
+    }
+
+
+
+    
+
+
+
+    public IEnumerator getAllDataFromFirebase()
+    {
+        Debug.Log("get All Data From Firebase");
+        Task getdatatask = reference.GetValueAsync().ContinueWithOnMainThread(
+            getValueTask =>
+            {
+                if (getValueTask.IsFaulted)
+                {
+                    Debug.Log("Error getting data " + getValueTask.Exception);
+                }
+
+                if (getValueTask.IsCompleted)
+                {
+                    DataSnapshot snapshot = getValueTask.Result;
+                    //Debug.Log(snapshot.Value.ToString());
+
+                    //snapshot object is casted to an instance of its type
+                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
+
+
+                }
+
+
+            }
+            );
+
+
+        yield return new WaitUntil(() => getdatatask.IsCompleted);
+
+        //the data has been saved to snapshot here
+        yield return StartCoroutine(displayData());
+    }
+
+    IEnumerator getAllData()
+    {
+        Debug.Log("getAllData");
+        yield return getNumberOfRecords();
+        Debug.Log(numberOfRecords);
+
+
+
+        yield return getAllDataFromFirebase();
+
+        Debug.Log("All records retreived");
+
+        yield return null;
+    }
+
+    public IEnumerator initFirebase()
+    {
+        if (!signedin)
+        {
+            FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://chess-9c5ab-default-rtdb.europe-west1.firebasedatabase.app/");
+            reference = FirebaseDatabase.DefaultInstance.RootReference;
+            yield return signInToFirebase();
+            Debug.Log("Firebase Initialized!");
+            yield return true;
+            signedin = true;
+        }
+        else
+        {
+            yield return null;
+        }
+    }
+    public bool signedin = false;
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        Debug.Log(currentPlayer.color);
+        if(currentPlayer.color == "white")
+        {
+            mycollor = false;
+        }else if (currentPlayer.color == "black")
+        {
+            mycollor = true;
+        }
+        Debug.Log(currentPlayerKey);
+        if ((myturn == true)&&(make == "eneter"))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+                if (hit.collider != null)
+                {
+                    Debug.Log(hit.collider.gameObject.name);
+                    string k = hit.collider.gameObject.name;
+                    string tt = k.Substring(1);
+                    bool jj;
+                    Debug.Log(tt);
+                    if ((tt == ",1")||(tt == ",2") || (tt == ",3") || (tt == ",4") || (tt == ",5") || (tt == ",6") || (tt == ",7") || (tt == ",8"))
+                    {
+                        if(l == true)
+                        {
+                            too = k;
+                            jj = false;
+                            make = "poggers";
+                            movell(move, too, jj);
+                        }
+                    }
+                    else if (l == false)
+                    {
+                        marks g = Get_peace_by_name(hit.collider.gameObject.name);
+                        bool r = check_collor(g);
+                        Debug.Log("r " + r);
+                            Debug.Log("enter move");
+                        if (g != null)
+                        {
+                            Debug.Log("enter g");
+                            if (r == true)
+                            {
+                                Debug.Log("enter r");
+                                Debug.Log(mycollor + " " + g.color);
+                                move = g.name;
+                                l = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        marks g = Get_peace_by_name(hit.collider.gameObject.name);
+                        bool r = check_collor(g);
+
+                        if (r == false)
+                            {
+                                Debug.Log("enter r");
+                                Debug.Log(mycollor + " " + g.color);
+                                too = g.name;
+                                l = true;
+                            jj = true;
+                            make = "poggers";
+                            movell(move, too, jj);
+                            }
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    public IEnumerator move_boxes()
+    {//BLACK PAWNS
+        GameObject Bp1OBJ = GameObject.Find("Bp1");
+        GameObject Bp1_location = GameObject.Find(Bp1.POSY+","+ Bp1.POSX);
+        Bp1OBJ.transform.position = Bp1_location.transform.position;
+
+        GameObject Bp2OBJ = GameObject.Find("Bp2");
+        GameObject Bp2_location = GameObject.Find(Bp2.POSY + "," + Bp2.POSX);
+        Bp2OBJ.transform.position = Bp2_location.transform.position;
+
+        GameObject Bp3OBJ = GameObject.Find("Bp3");
+        GameObject Bp3_location = GameObject.Find(Bp3.POSY + "," + Bp3.POSX);
+        Bp3OBJ.transform.position = Bp3_location.transform.position;
+
+        GameObject Bp4OBJ = GameObject.Find("Bp4");
+        GameObject Bp4_location = GameObject.Find(Bp4.POSY + "," + Bp4.POSX);
+        Bp4OBJ.transform.position = Bp4_location.transform.position;
+
+        GameObject Bp5OBJ = GameObject.Find("Bp5");
+        GameObject Bp5_location = GameObject.Find(Bp5.POSY + "," + Bp5.POSX);
+        Bp5OBJ.transform.position = Bp5_location.transform.position;
+
+        GameObject Bp6OBJ = GameObject.Find("Bp6");
+        GameObject Bp6_location = GameObject.Find(Bp6.POSY + "," + Bp6.POSX);
+        Bp6OBJ.transform.position = Bp6_location.transform.position;
+
+        GameObject Bp7OBJ = GameObject.Find("Bp7");
+        GameObject Bp7_location = GameObject.Find(Bp7.POSY + "," + Bp7.POSX);
+        Bp7OBJ.transform.position = Bp7_location.transform.position;
+
+        GameObject Bp8OBJ = GameObject.Find("Bp8");
+        GameObject Bp8_location = GameObject.Find(Bp8.POSY + "," + Bp8.POSX);
+        Bp8OBJ.transform.position = Bp8_location.transform.position;
+
+
+        //WHITE PAWNS
+        GameObject Wp1OBJ = GameObject.Find("Wp1");
+        GameObject Wp1_location = GameObject.Find(Wp1.POSY + "," + Wp1.POSX);
+        Wp1OBJ.transform.position = Wp1_location.transform.position;
+
+        GameObject Wp2OBJ = GameObject.Find("Wp2");
+        GameObject Wp2_location = GameObject.Find(Wp2.POSY + "," + Wp2.POSX);
+        Wp2OBJ.transform.position = Wp2_location.transform.position;
+
+        GameObject Wp3OBJ = GameObject.Find("Wp3");
+        GameObject Wp3_location = GameObject.Find(Wp3.POSY + "," + Wp3.POSX);
+        Wp3OBJ.transform.position = Wp3_location.transform.position;
+
+        GameObject Wp4OBJ = GameObject.Find("Wp4");
+        GameObject Wp4_location = GameObject.Find(Wp4.POSY + "," + Wp4.POSX);
+        Wp4OBJ.transform.position = Wp4_location.transform.position;
+
+        GameObject Wp5OBJ = GameObject.Find("Wp5");
+        GameObject Wp5_location = GameObject.Find(Wp5.POSY + "," + Wp5.POSX);
+        Wp5OBJ.transform.position = Wp5_location.transform.position;
+
+        GameObject Wp6OBJ = GameObject.Find("Wp6");
+        GameObject Wp6_location = GameObject.Find(Wp6.POSY + "," + Wp6.POSX);
+        Wp6OBJ.transform.position = Wp6_location.transform.position;
+
+        GameObject Wp7OBJ = GameObject.Find("Wp7");
+        GameObject Wp7_location = GameObject.Find(Wp7.POSY + "," + Wp7.POSX);
+        Wp7OBJ.transform.position = Wp7_location.transform.position;
+
+        GameObject Wp8OBJ = GameObject.Find("Wp8");
+        GameObject Wp8_location = GameObject.Find(Wp8.POSY + "," + Wp8.POSX);
+        Wp8OBJ.transform.position = Wp8_location.transform.position;
+
+        //BLACK PEACES
+        GameObject Br1OBJ = GameObject.Find("Br1");
+        GameObject Br1_location = GameObject.Find(Br1.POSY + "," + Br1.POSX);
+        Br1OBJ.transform.position = Br1_location.transform.position;
+
+        GameObject Br2OBJ = GameObject.Find("Br2");
+        GameObject Br2_location = GameObject.Find(Br2.POSY + "," + Br2.POSX);
+        Br2OBJ.transform.position = Br2_location.transform.position;
+
+        GameObject Bk1OBJ = GameObject.Find("Bk1");
+        GameObject Bk1_location = GameObject.Find(Bk1.POSY + "," + Bk1.POSX);
+        Bk1OBJ.transform.position = Bk1_location.transform.position;
+
+        GameObject Bk2OBJ = GameObject.Find("Bk2");
+        GameObject Bk2_location = GameObject.Find(Bk2.POSY + "," + Bk2.POSX);
+        Bk2OBJ.transform.position = Bk2_location.transform.position;
+
+        GameObject Bb1OBJ = GameObject.Find("Bb1");
+        GameObject Bb1_location = GameObject.Find(Bb1.POSY + "," + Bb1.POSX);
+        Bb1OBJ.transform.position = Bb1_location.transform.position;
+
+        GameObject Bb2OBJ = GameObject.Find("Bb2");
+        GameObject Bb2_location = GameObject.Find(Bb2.POSY + "," + Bb2.POSX);
+        Bb2OBJ.transform.position = Bb2_location.transform.position;
+
+        GameObject BqOBJ = GameObject.Find("Bq");
+        GameObject Bq_location = GameObject.Find(Bq.POSY + "," + Bq.POSX);
+        BqOBJ.transform.position = Bq_location.transform.position;
+
+        GameObject KingBOBJ = GameObject.Find("KingB");
+        GameObject KingB_location = GameObject.Find(KingB.POSY + "," + KingB.POSX);
+        KingBOBJ.transform.position = KingB_location.transform.position;
+
+
+        //WHITE PEACES
+        GameObject Wr1OBJ = GameObject.Find("Wr1");
+        GameObject Wr1_location = GameObject.Find(Wr1.POSY + "," + Wr1.POSX);
+        Wr1OBJ.transform.position = Wr1_location.transform.position;
+
+        GameObject Wr2OBJ = GameObject.Find("Wr2");
+        GameObject Wr2_location = GameObject.Find(Wr2.POSY + "," + Wr2.POSX);
+        Wr2OBJ.transform.position = Wr2_location.transform.position;
+
+        GameObject Wk1OBJ = GameObject.Find("Wk1");
+        GameObject Wk1_location = GameObject.Find(Wk1.POSY + "," + Wk1.POSX);
+        Wk1OBJ.transform.position = Wk1_location.transform.position;
+
+        GameObject Wk2OBJ = GameObject.Find("Wk2");
+        GameObject Wk2_location = GameObject.Find(Wk2.POSY + "," + Wk2.POSX);
+        Wk2OBJ.transform.position = Wk2_location.transform.position;
+
+        GameObject Wb1OBJ = GameObject.Find("Wb1");
+        GameObject Wb1_location = GameObject.Find(Wb1.POSY + "," + Wb1.POSX);
+        Wb1OBJ.transform.position = Wb1_location.transform.position;
+
+        GameObject Wb2OBJ = GameObject.Find("Wb2");
+        GameObject Wb2_location = GameObject.Find(Wb2.POSY + "," + Wb2.POSX);
+        Wb2OBJ.transform.position = Wb2_location.transform.position;
+
+        GameObject WqOBJ = GameObject.Find("Wq");
+        GameObject Wq_location = GameObject.Find(Wq.POSY + "," + Wq.POSX);
+        WqOBJ.transform.position = Wq_location.transform.position;
+
+        GameObject KingWOBJ = GameObject.Find("KingW");
+        GameObject KingW_location = GameObject.Find(KingW.POSY + "," + KingW.POSX);
+        KingWOBJ.transform.position = KingW_location.transform.position;
+        return null;
+    }
+
+    public void movell(string move, string too, bool jj)
+    {
+        Debug.Log("movell");
+        if(jj == true)
+        {
+            Debug.Log("JJ "+jj);
+            int tt = 0;
+            int rr = 0;
+            //TOO
+            //BLACK PAWNS
+            if (too == "Bp1")
+            {
+                rr = Bp1.POSX;
+                tt = Bp1.POSY;
+                Bp1.POSY = 0;
+                Bp1.POSX = 0;
+                Bp1.live = false;
+                Debug.Log(Bp1.POSY);
+                Debug.Log(Bp1.POSX);
+            }
+            else if (too == "Bp2")
+            {
+                rr = Bp2.POSX;
+                tt = Bp2.POSY;
+                Bp2.POSY = 0;
+                Bp2.POSX = 0;
+                Bp2.live = false;
+                Debug.Log(Bp1.POSY);
+                Debug.Log(Bp1.POSX);
+            }
+            else if (too == "Bp3")
+            {
+                rr = Bp3.POSX;
+                tt = Bp3.POSY;
+                Bp3.POSY = 0;
+                Bp3.POSX = 0;
+                Bp3.live = false;
+                Debug.Log(Bp2.POSY);
+                Debug.Log(Bp2.POSX);
+            }
+            else if (too == "Bp4")
+            {
+                rr = Bp4.POSX;
+                tt = Bp4.POSY;
+                Bp4.POSY = 0;
+                Bp4.POSX = 0;
+                Bp4.live = false;
+                Debug.Log(Bp3.POSY);
+                Debug.Log(Bp3.POSX);
+            }
+            else if (too == "Bp5")
+            {
+                rr = Bp5.POSX;
+                tt = Bp5.POSY;
+                Bp5.POSY = 0;
+                Bp5.POSX = 0;
+                Bp5.live = false;
+                Debug.Log(Bp5.POSY);
+                Debug.Log(Bp5.POSX);
+            }
+            else if (too == "Bp6")
+            {
+                rr = Bp6.POSX;
+                tt = Bp6.POSY;
+                Bp6.POSY = 0;
+                Bp6.POSX = 0;
+                Bp6.live = false;
+                Debug.Log(Bp6.POSY);
+                Debug.Log(Bp6.POSX);
+            }
+            else if (too == "Bp7")
+            {
+                rr = Bp7.POSX;
+                tt = Bp7.POSY;
+                Bp7.POSY = 0;
+                Bp7.POSX = 0;
+                Bp7.live = false;
+                Debug.Log(Bp7.POSY);
+                Debug.Log(Bp7.POSX);
+            }
+            else if (too == "Bp8")
+            {
+                rr = Bp8.POSX;
+                tt = Bp8.POSY;
+                Bp8.POSY = 0;
+                Bp8.POSX = 0;
+                Bp8.live = false;
+                Debug.Log(Bp8.POSY);
+                Debug.Log(Bp8.POSX);
+            }
+
+            //WHITE PAWNS
+            else if (too == "Wp1")
+            {
+                rr = Wp1.POSX;
+                tt = Wp1.POSY;
+                Wp1.POSY = 0;
+                Wp1.POSX = 0;
+                Wp1.live = false;
+                Debug.Log(Wp1.POSY);
+                Debug.Log(Wp1.POSX);
+            }
+            else if (too == "Wp2")
+            {
+                rr = Wp2.POSX;
+                tt = Wp2.POSY;
+                Wp2.POSY = 0;
+                Wp2.POSX = 0;
+                Wp2.live = false;
+                Debug.Log(Wp2.POSY);
+                Debug.Log(Wp2.POSX);
+            }
+            else if (too == "Wp3")
+            {
+                rr = Wp3.POSX;
+                tt = Wp3.POSY;
+                Wp3.POSY = 0;
+                Wp3.POSX = 0;
+                Wp3.live = false;
+                Debug.Log(Wp3.POSY);
+                Debug.Log(Wp3.POSX);
+            }
+            else if (too == "Wp4")
+            {
+                rr = Wp4.POSX;
+                tt = Wp4.POSY;
+                Wp4.POSY = 0;
+                Wp4.POSX = 0;
+                Wp4.live = false;
+                Debug.Log(Wp4.POSY);
+                Debug.Log(Wp4.POSX);
+            }
+            else if (too == "Wp5")
+            {
+                rr = Wp5.POSX;
+                tt = Wp5.POSY;
+                Wp5.POSY = 0;
+                Wp5.POSX = 0;
+                Wp5.live = false;
+                Debug.Log(Wp5.POSY);
+                Debug.Log(Wp5.POSX);
+            }
+            else if (too == "Wp6")
+            {
+                rr = Wp6.POSX;
+                tt = Wp6.POSY;
+                Wp6.POSY = 0;
+                Wp6.POSX = 0;
+                Wp6.live = false;
+                Debug.Log(Wp6.POSY);
+                Debug.Log(Wp6.POSX);
+            }
+            else if (too == "Wp7")
+            {
+                rr = Wp7.POSX;
+                tt = Wp7.POSY;
+                Wp7.POSY = 0;
+                Wp7.POSX = 0;
+                Wp7.live = false;
+                Debug.Log(Wp7.POSY);
+                Debug.Log(Wp7.POSX);
+            }
+            else if (too == "Wp8")
+            {
+                rr = Wp8.POSX;
+                tt = Wp8.POSY;
+                Wp8.POSY = 0;
+                Wp8.POSX = 0;
+                Wp8.live = false;
+                Debug.Log(Wp8.POSY);
+                Debug.Log(Wp8.POSX);
+            }
+
+
+            //BLACK PEACES
+            else if (too == "Br1")
+            {
+                Br1.POSY = 0;
+                Br1.POSX = 0;
+                Br1.live = false;
+                Debug.Log(Br1.POSY);
+                Debug.Log(Br1.POSX);
+            }
+            else if (too == "Br2")
+            {
+                Br2.POSY = 0;
+                Br2.POSX = 0;
+                Br2.live = false;
+                Debug.Log(Br2.POSY);
+                Debug.Log(Br2.POSX);
+            }
+            else if (too == "Bk1")
+            {
+                Bk1.POSY = 0;
+                Bk1.POSX = 0;
+                Bk1.live = false;
+                Debug.Log(Bk1.POSY);
+                Debug.Log(Bk1.POSX);
+            }
+            else if (too == "Bk2")
+            {
+                Bk2.POSY = 0;
+                Bk2.POSX = 0;
+                Bk2.live = false;
+                Debug.Log(Bk2.POSY);
+                Debug.Log(Bk2.POSX);
+            }
+            else if (too == "Bb1")
+            {
+                Bb1.POSY = 0;
+                Bb1.POSX = 0;
+                Bb1.live = false;
+                Debug.Log(Bb1.POSY);
+                Debug.Log(Bb1.POSX);
+            }
+            else if (too == "Bb2")
+            {
+                Bb2.POSY = 0;
+                Bb2.POSX = 0;
+                Bb2.live = false;
+                Debug.Log(Bb2.POSY);
+                Debug.Log(Bb2.POSX);
+            }
+            else if (too == "Bq")
+            {
+                Bq.POSY = 0;
+                Bq.POSX = 0;
+                Bq.live = false;
+                Debug.Log(Bq.POSY);
+                Debug.Log(Bq.POSX);
+            }
+            else if (too == "KingB")
+            {
+                KingB.POSY = 0;
+                KingB.POSX = 0;
+                KingB.live = false;
+                Debug.Log(KingB.POSY);
+                Debug.Log(KingB.POSX);
+            }
+
+            //BLACK PEACES
+            else if (too == "Wr1")
+            {
+                Wr1.POSY = 0;
+                Wr1.POSX = 0;
+                Wr1.live = false;
+                Debug.Log(Wr1.POSY);
+                Debug.Log(Wr1.POSX);
+            }
+            else if (too == "Br2")
+            {
+                Br2.POSY = 0;
+                Br2.POSX = 0;
+                Br2.live = false;
+                Debug.Log(Wr2.POSY);
+                Debug.Log(Wr2.POSX);
+            }
+            else if (too == "Wk1")
+            {
+                Wk1.POSY = 0;
+                Wk1.POSX = 0;
+                Wk1.live = false;
+                Debug.Log(Wk1.POSY);
+                Debug.Log(Wk1.POSX);
+            }
+            else if (too == "Wk2")
+            {
+                Wk2.POSY = 0;
+                Wk2.POSX = 0;
+                Wk2.live = false;
+                Debug.Log(Wk2.POSY);
+                Debug.Log(Wk2.POSX);
+            }
+            else if (too == "Wb1")
+            {
+                Wb1.POSY = 0;
+                Wb1.POSX = 0;
+                Wb1.live = false;
+                Debug.Log(Wb1.POSY);
+                Debug.Log(Wb1.POSX);
+            }
+            else if (too == "Wb2")
+            {
+                Wb2.POSY = 0;
+                Wb2.POSX = 0;
+                Wb2.live = false;
+                Debug.Log(Wb2.POSY);
+                Debug.Log(Wb2.POSX);
+            }
+            else if (too == "Wq")
+            {
+                Wq.POSY = 0;
+                Wq.POSX = 0;
+                Wq.live = false;
+                Debug.Log(Wq.POSY);
+                Debug.Log(Wq.POSX);
+            }
+            else if (too == "KingW")
+            {
+                KingW.POSY = 0;
+                KingW.POSX = 0;
+                KingW.live = false;
+                Debug.Log(KingW.POSY);
+                Debug.Log(KingW.POSX);
+            }
+
+
+
+            //move
+            if (move == "Bp1")
+            {
+                Bp1.POSY = tt;
+                Bp1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp2")
+            {
+                Bp2.POSY = tt;
+                Bp2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp3")
+            {
+                Bp3.POSY = tt;
+                Bp3.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp4")
+            {
+                Bp4.POSY = tt;
+                Bp4.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp5")
+            {
+                Bp5.POSY = tt;
+                Bp5.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp6")
+            {
+                Bp6.POSY = tt;
+                Bp6.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp7")
+            {
+                Bp7.POSY = tt;
+                Bp7.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp8")
+            {
+                Bp8.POSY = tt;
+                Bp8.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+            //WHITE PAWNS
+            else if (move == "Wp1")
+            {
+                Wp1.POSY = tt;
+                Wp1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp2")
+            {
+                Wp2.POSY = tt;
+                Wp2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp3")
+            {
+                Wp3.POSY = tt;
+                Wp3.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp4")
+            {
+                Wp4.POSY = tt;
+                Wp4.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp5")
+            {
+                Wp5.POSY = tt;
+                Wp5.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp6")
+            {
+                Wp6.POSY = tt;
+                Wp6.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp7")
+            {
+                Wp7.POSY = tt;
+                Wp7.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp8")
+            {
+                Wp8.POSY = tt;
+                Wp8.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+
+            //BLACK PEACES
+            else if (move == "Br1")
+            {
+                Br1.POSY = tt;
+                Br1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Br2")
+            {
+                Br2.POSY = tt;
+                Br2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bk1")
+            {
+                Bk1.POSY = tt;
+                Bk1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bk2")
+            {
+                Bk2.POSY = tt;
+                Bk2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bb1")
+            {
+                Bb1.POSY = tt;
+                Bb1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bb2")
+            {
+                Bb2.POSY = tt;
+                Bb2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bq")
+            {
+                Bq.POSY = tt;
+                Bq.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "KingB")
+            {
+                KingB.POSY = tt;
+                KingB.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+            //WHITE PEACES
+            else if (move == "Wr1")
+            {
+                Wr1.POSY = tt;
+                Wr1.POSX = rr;
+            }
+            else if (move == "Wr2")
+            {
+                Wr2.POSY = tt;
+                Wr2.POSX = rr;
+            }
+            else if (move == "Wk1")
+            {
+                Wk1.POSY = tt;
+                Wk1.POSX = rr;
+            }
+            else if (move == "Wk2")
+            {
+                Wk2.POSY = tt;
+                Wk2.POSX = rr;
+            }
+            else if (move == "Wb1")
+            {
+                Wb1.POSY = tt;
+                Wb1.POSX = rr;
+            }
+            else if (move == "Wb2")
+            {
+                Wb2.POSY = tt;
+                Wb2.POSX = rr;
+            }
+            else if (move == "Wq")
+            {
+                Wq.POSY = tt;
+                Wq.POSX = rr;
+            }
+            else if (move == "KingW")
+            {
+                KingW.POSY = tt;
+                KingW.POSX = rr;
+            }
+
+            
+
+            //WHITE PEACES
+            else if (too == "Wr1")
+            {
+                Wr1.POSY = 0;
+                Wr1.POSX = 0;
+                Wr1.live = false;
+            }
+            else if (too == "Wr2")
+            {
+                Wr2.POSY = 0;
+                Wr2.POSX = 0;
+                Wr2.live = false;
+            }
+            else if (too == "Wk1")
+            {
+                Wk1.POSY = 0;
+                Wk1.POSX = 0;
+                Wk1.live = false;
+            }
+            else if (too == "Wk2")
+            {
+                Wk2.POSY = 0;
+                Wk2.POSX = 0;
+                Wk2.live = false;
+            }
+            else if (too == "Wb1")
+            {
+                Wb1.POSY = 0;
+                Wb1.POSX = 0;
+                Wb1.live = false;
+            }
+            else if (too == "Wb2")
+            {
+                Wb2.POSY = 0;
+                Wb2.POSX = 0;
+                Wb2.live = false;
+            }
+            else if (too == "Wq")
+            {
+                Wq.POSY = 0;
+                Wq.POSX = 0;
+                Wq.live = false;
+            }
+            else if (too == "KingW")
+            {
+                KingW.POSY = 0;
+                KingW.POSX = 0;
+                KingW.live = false;
+
+            }
+        }
+        else if (jj == false)
+        {
+            Debug.Log("too " + jj);
+            Debug.Log(too.Substring(0, 1));
+            int tt = int.Parse(too.Substring(0, 1));
+            Debug.Log(tt);
+            Debug.Log(too.Substring(2, 1));
+            int rr = int.Parse(too.Substring(2, 1));
+            Debug.Log(rr);
+            //BLACK PAWNS
+            if (move == "Bp1")
+            {
+                Bp1.POSY = tt;
+                Bp1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp2")
+            {
+                Bp2.POSY = tt;
+                Bp2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp3")
+            {
+                Bp3.POSY = tt;
+                Bp3.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp4")
+            {
+                Bp4.POSY = tt;
+                Bp4.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp5")
+            {
+                Bp5.POSY = tt;
+                Bp5.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp6")
+            {
+                Bp6.POSY = tt;
+                Bp6.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp7")
+            {
+                Bp7.POSY = tt;
+                Bp7.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bp8")
+            {
+                Bp8.POSY = tt;
+                Bp8.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+            //WHITE PAWNS
+            else if (move == "Wp1")
+            {
+                Wp1.POSY = tt;
+                Wp1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp2")
+            {
+                Wp2.POSY = tt;
+                Wp2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp3")
+            {
+                Wp3.POSY = tt;
+                Wp3.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp4")
+            {
+                Wp4.POSY = tt;
+                Wp4.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp5")
+            {
+                Wp5.POSY = tt;
+                Wp5.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp6")
+            {
+                Wp6.POSY = tt;
+                Wp6.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp7")
+            {
+                Wp7.POSY = tt;
+                Wp7.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wp8")
+            {
+                Wp8.POSY = tt;
+                Wp8.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+            
+            //BLACK PEACES
+            else if (move == "Br1")
+            {
+                Br1.POSY = tt;
+                Br1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Br2")
+            {
+                Br2.POSY = tt;
+                Br2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bk1")
+            {
+                Bk1.POSY = tt;
+                Bk1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bk2")
+            {
+                Bk2.POSY = tt;
+                Bk2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bb1")
+            {
+                Bb1.POSY = tt;
+                Bb1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bb2")
+            {
+                Bb2.POSY = tt;
+                Bb2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Bq")
+            {
+                Bq.POSY = tt;
+                Bq.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "KingB")
+            {
+                KingB.POSY = tt;
+                KingB.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+            //WHITE PEACES
+            else if (move == "Wr1")
+            {
+                Wr1.POSY = tt;
+                Wr1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wr2")
+            {
+                Wr2.POSY = tt;
+                Wr2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wk1")
+            {
+                Wk1.POSY = tt;
+                Wk1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wk2")
+            {
+                Wk2.POSY = tt;
+                Wk2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wb1")
+            {
+                Wb1.POSY = tt;
+                Wb1.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "Wb2")
+            {
+                Wb2.POSY = tt;
+                Wb2.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }           
+            else if (move == "Wq")
+            {
+                Wq.POSY = tt;
+                Wq.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+            else if (move == "KingW")
+            {
+                KingW.POSY = tt;
+                KingW.POSX = rr;
+                Debug.Log("SARTING COLOR");
+                StartCoroutine(addColorForm(otherPlayer.color));
+            }
+
+
+            Debug.Log("SARTING COLOR");
+            StartCoroutine( addColorForm(otherPlayer.color));
+        }
+    }
+
+    public bool check_collor(marks a)
+    {
+        Debug.Log("check_collor");
+        Debug.Log(a.color+ " a.color");
+        Debug.Log(currentPlayer.color + " currentPlayer.color");
+        bool t;
+        string m;
+        if(a.color == false)
+        {
+            m = "white";
+        }
+        else
+        {
+            m = "black";
+        }
+        Debug.Log(m);
+
+        if(m == currentPlayer.color)
+        {
+            Debug.Log("return true");
+            return true;
+        }
+        else
+        {
+            Debug.Log("return flase");
+            return false;
+        }
+    }
+
+    public bool check_Bp(marks a)
+    {
+        string check_l;
+        if (a.POSY <= 8)
+        {
+            return false;
+        }
+
+        if (a.POSX - 1 > 0)
+        {
+            check_l = Check_box(a.POSX-1, a.POSY, a.color);
+            if (check_l == "enemy")
+            {
+                locations.Add(a.POSY + "," + (a.POSX-1));
+                return true;
+            }
+        }
+        string check_r;
+        if (a.POSX + 1 < 8)
+        {
+            check_r = Check_box(a.POSX+1, a.POSY, a.color);
+            if (check_r == "enemy")
+            {
+                locations.Add(a.POSY + "," + (a.POSX + 1));
+                return true;
+            }
+        }
+        string check_f;
+        check_f = Check_box(a.POSX , a.POSY+1, a.color);
+        if(check_f == "open")
+        {
+            locations.Add((a.POSY + 1) + "," + a.POSX);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool check_Wp(marks a)
+    {
+        string check_l;
+        if (a.POSY  <= 1)
+        {
+            return false;
+        }
+
+        if (a.POSX - 1 > 0)
+        {
+            check_l = Check_box(a.POSX - 1, a.POSY, a.color);
+            if (check_l == "enemy")
+            {
+                locations.Add(a.POSY + "," + (a.POSX - 1));
+                return true;
+            }
+        }
+        string check_r;
+        if (a.POSX + 1 < 8)
+        {
+            check_r = Check_box(a.POSX + 1, a.POSY, a.color);
+            if (check_r == "enemy")
+            {
+                locations.Add(a.POSY + "," + (a.POSX + 1));
+                return true;
+            }
+        }
+        string check_f;
+        check_f = Check_box(a.POSX, a.POSY - 1, a.color);
+        if (check_f == "open")
+        {
+            locations.Add((a.POSY-1) + "," + a.POSX);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool check_KING(marks a)
+    {
+        return false;
+    }
+
+    public bool check_moves(marks a)
+    {
+        bool check;
+        locations.Clear();
+        if(a.pieace == "Bp")
+        {
+            check = check_Bp(a);
+        }
+        else if (a.pieace == "Wp")
+        {
+            check = check_Wp(a);
+        }
+        else if ((a.pieace == "Br")||(a.pieace == "Wr"))
+        {
+
+        }
+        else if ((a.pieace == "Bk") || (a.pieace == "Wk"))
+        {
+
+        }
+        else if ((a.pieace == "Bb") || (a.pieace == "Wb"))
+        {
+
+        }
+        else if ((a.pieace == "Bq") || (a.pieace == "Wq"))
+        {
+
+        }
+        else if ((a.pieace == "KINGb") || (a.pieace == "KINGw"))
+        {
+
+        }
+        return false;
+    }
+
+    public string Check_box(int x, int y, bool colr)
+    {
+        Debug.Log("Check_box");
+        string open = "open";
+        
+
+        if ((x == Bp1.POSX) && (y == Bp1.POSY))
+        {
+            if (Bp1.color == colr)
             {
                 open = "close";
             }
@@ -580,7 +3008,7 @@ public class chessfirebase : MonoBehaviour
                 open = "enemy";
             }
         }
-        else if((x == Bp3.POSX) && (y == Bp3.POSY))
+        else if ((x == Bp3.POSX) && (y == Bp3.POSY))
         {
             if (Bp3.color == colr)
             {
@@ -591,7 +3019,7 @@ public class chessfirebase : MonoBehaviour
                 open = "enemy";
             }
         }
-        else if((x == Bp4.POSX) && (y == Bp4.POSY))
+        else if ((x == Bp4.POSX) && (y == Bp4.POSY))
         {
             if (Bp4.color == colr)
             {
@@ -602,7 +3030,7 @@ public class chessfirebase : MonoBehaviour
                 open = "enemy";
             }
         }
-        else if((x == Bp5.POSX) && (y == Bp5.POSY))
+        else if ((x == Bp5.POSX) && (y == Bp5.POSY))
         {
             if (Bp5.color == colr)
             {
@@ -613,7 +3041,7 @@ public class chessfirebase : MonoBehaviour
                 open = "enemy";
             }
         }
-        else if((x == Bp6.POSX) && (y == Bp6.POSY))
+        else if ((x == Bp6.POSX) && (y == Bp6.POSY))
         {
             if (Bp6.color == colr)
             {
@@ -624,7 +3052,7 @@ public class chessfirebase : MonoBehaviour
                 open = "enemy";
             }
         }
-        else if((x == Bp7.POSX) && (y == Bp7.POSY))
+        else if ((x == Bp7.POSX) && (y == Bp7.POSY))
         {
             if (Bp7.color == colr)
             {
@@ -635,7 +3063,7 @@ public class chessfirebase : MonoBehaviour
                 open = "enemy";
             }
         }
-        else if((x == Bp8.POSX) && (y == Bp8.POSY))
+        else if ((x == Bp8.POSX) && (y == Bp8.POSY))
         {
             if (Bp8.color == colr)
             {
@@ -927,8 +3355,9 @@ public class chessfirebase : MonoBehaviour
 
     public marks Get_peace(int x, int y)
     {
-        marks name = null ;
-        
+        Debug.Log("Get_peace");
+        marks name = null;
+
 
         if ((x == Bp1.POSX) && (y == Bp1.POSY))
         {
@@ -1073,780 +3502,152 @@ public class chessfirebase : MonoBehaviour
         return name;
     }
 
-    IEnumerator createUser()
+    public marks Get_peace_by_name(string x)
     {
-        Debug.Log("create user");
-        auth = FirebaseAuth.DefaultInstance;
+        Debug.Log("Get_peace");
+        marks name = null;
 
 
-
-
-
-        Task createusertask = auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(
-             //created an anonymous inner class inside continueonmainthread which is of type Task
-             createUserTask =>
-             {
-                 //if anything goes wrong
-                 if (createUserTask.IsCanceled)
-                 {
-                     //I pressed escape or cancelled the task
-                     Debug.Log("Sorry, user was not created!");
-                     return;
-                 }
-                 if (createUserTask.IsFaulted)
-                 {
-                     //my internet exploded or firebase exploded or some other error happened here
-                     Debug.Log("Sorry, user was not created!" + createUserTask.Exception);
-
-                     return;
-                 }
-                 //if anything goes wrong, otherwise
-                 Firebase.Auth.FirebaseUser myNewUser = createUserTask.Result;
-                 Debug.Log("Your nice new user is:" + myNewUser.DisplayName + " " + myNewUser.UserId);
-                 //THIS IS WHAT HAPPENS AT THE END OF THE ASYNC TASK
-
-
-             }
-             );
-
-
-
-        //*a better way to wait until the end of the coroutine*//
-        yield return new WaitUntil(() => createusertask.IsCompleted);
-
-
-
-    }
-
-    public IEnumerator CheckIfEmpty()
-    {
-        int num = 1;
-        Task numberofrecordstask = reference.GetValueAsync().ContinueWithOnMainThread(
-             getValueTask =>
-             {
-                 if (getValueTask.IsFaulted)
-                 {
-                     Debug.Log("Error getting data " + getValueTask.Exception);
-                 }
-
-                 if (getValueTask.IsCompleted)
-                 {
-                    
-                     DataSnapshot snapshot = getValueTask.Result;
-                     Debug.Log(snapshot.ChildrenCount);
-                     num = (int)snapshot.ChildrenCount;
-                     Debug.Log("total "+num);
-                     
-
-                 }
-
-
-             }
-             );
-       
-
-        
-
-        yield return new WaitUntil(() => numberofrecordstask.IsCompleted);
-        if (num > 2)
+        if ((x == Bp1.name))
         {
-            yield return StartCoroutine(clearFirebase());
+            name = Bp1;
+        }
+        else if ((x == Bp2.name))
+        {
+            name = Bp2;
+        }
+        else if ((x == Bp3.name))
+        {
+            name = Bp3;
+        }
+        else if ((x == Bp4.name))
+        {
+            name = Bp4;
+        }
+        else if ((x == Bp5.name))
+        {
+            name = Bp5;
+        }
+        else if ((x == Bp6.name))
+        {
+            name = Bp6;
+        }
+        else if ((x == Bp7.name))
+        {
+            name = Bp7;
+        }
+        else if ((x == Bp8.name))
+        {
+            name = Bp8;
         }
 
-    }
+        // white pawns
 
-    public IEnumerator clearFirebase()
-    {
-        Task removeAllRecords = reference.RemoveValueAsync().ContinueWithOnMainThread(
-            rmAllRecords =>
-            {
-                if (rmAllRecords.IsCompleted)
-                {
-                    Debug.Log("Database clear");
-                }
-            });
-
-        yield return new WaitUntil(() => removeAllRecords.IsCompleted);
-
-    }
-
-    //get the number of records for a child
-    public IEnumerator getNumberOfRecords()
-    {
-        Task numberofrecordstask = reference.GetValueAsync().ContinueWithOnMainThread(
-             getValueTask =>
-             {
-                 if (getValueTask.IsFaulted)
-                 {
-                     Debug.Log("Error getting data " + getValueTask.Exception);
-                 }
-
-                 if (getValueTask.IsCompleted)
-                 {
-                     DataSnapshot snapshot = getValueTask.Result;
-                     Debug.Log(snapshot.ChildrenCount);
-                     numberOfRecords = (int)snapshot.ChildrenCount;
-                     pl = numberOfRecords;
-
-                 }
-
-
-             }
-             );
-        /*
-        while (!numberofrecordsretreived)
-            yield return null;*/
-        
-        yield return new WaitUntil(() => numberofrecordstask.IsCompleted);
-
-
-    }
-
-    IEnumerator getMineDataFromFirebase(string childLabel)
-    {
-
-        Task getdatatask = reference.Child(childLabel).GetValueAsync().ContinueWithOnMainThread(
-            getValueTask =>
-            {
-                bool displaydata = false;
-                if (getValueTask.IsFaulted)
-                {
-                    Debug.Log("Error getting data " + getValueTask.Exception);
-                }
-
-                if (getValueTask.IsCompleted)
-                {
-                    DataSnapshot snapshot = getValueTask.Result;
-                    Debug.Log(snapshot.Value.ToString());
-
-                    //snapshot object is casted to an instance of its type
-                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
-
-
-
-
-                    Debug.Log("Data received" + Time.time);
-                    displaydata = true;
-                    //    Debug.Log("Data received");
-
-                }
-
-
-            }
-            );
-        //shock absorber
-        /* while (!displaydata)
-         {
-             //the data has NOT YET been saved to snapshot
-             yield return null;
-         }*/
-
-        yield return new WaitUntil(() => getdatatask.IsCompleted);
-
-        //the data has been saved to snapshot here
-        yield return StartCoroutine(displayDataMine());
-    }
-
-    IEnumerator displayDataMine()
-    {
-        foreach (var element in myDataDictionary)
+        else if ((x == Wp1.name))
         {
-            Debug.Log(element.Key.ToString() + "<->" + element.Value.ToString());
-            if ((element.Key.ToString() == "PlayerName"))
-            {
-                Debug.Log("Reached");
-                currentPlayer.PlayerName = element.Value.ToString();
-
-            }
-            if ((element.Key.ToString() == "color"))
-            {
-                Debug.Log("Reached");
-                currentPlayer.color = element.Value.ToString();
-
-            }
-            if ((element.Key.ToString() == "isHisTurn"))
-            {
-                if (element.Value.ToString() == "true")
-                {
-                    currentPlayer.isHisTurn = true;
-                }
-                if (element.Value.ToString() == "false")
-                {
-                    currentPlayer.isHisTurn = false;
-                }
-
-            }
-            yield return new WaitForSeconds(1f);
+            name = Wp1;
+        }
+        else if ((x == Wp2.name))
+        {
+            name = Wp2;
+        }
+        else if ((x == Wp3.name))
+        {
+            name = Wp3;
+        }
+        else if ((x == Wp4.name))
+        {
+            name = Wp4;
+        }
+        else if ((x == Wp5.name))
+        {
+            name = Wp5;
+        }
+        else if ((x == Wp6.name))
+        {
+            name = Wp6;
+        }
+        else if ((x == Wp7.name))
+        {
+            name = Wp7;
+        }
+        else if ((x == Wp8.name))
+        {
+            name = Wp8;
         }
 
-        yield return null;
-    }
+        //black pices 
 
-
-
-    IEnumerator updateDataClass(string childlabel, string newdata)
-    {
-
-
-        //find the child of player4 that corresponds to playername and set the value to whatever is inside newdata
-        Task updateJsonValueTask = reference.Child(childlabel).SetRawJsonValueAsync(newdata).ContinueWithOnMainThread(
-            updJsonValueTask =>
-            {
-                if (updJsonValueTask.IsCompleted)
-                {
-                    // dataupdated = true;
-                }
-
-            });
-
-
-        yield return new WaitUntil(() => updateJsonValueTask.IsCompleted);
-
-
-
-
-    }
-
-    IEnumerator updatecolorDataClass(chessfirebase childlabel, string newdata)
-    {
-        string jsonshot = JsonUtility.ToJson(newdata);
-        Debug.Log(newdata);
-        Debug.Log(jsonshot);
-
-
-        //find the child of player4 that corresponds to playername and set the value to whatever is inside newdata
-        Task updateJsonValueTask = reference.Child(childlabel.currentPlayerKey).Child("color").SetRawJsonValueAsync(jsonshot).ContinueWithOnMainThread(
-            
-        updJsonValueTask =>
-            {
-                
-                if (updJsonValueTask.IsCompleted)
-                {
-                    // dataupdated = true;
-                }
-
-            });
-
-
-        yield return new WaitUntil(() => updateJsonValueTask.IsCompleted);
-
-
-
-
-    }
-
-    IEnumerator getEnemyDataFromFirebase(string childLabel)
-    {
-
-        Task getdatatask = reference.Child(childLabel).GetValueAsync().ContinueWithOnMainThread(
-            getValueTask =>
-            {
-                bool displaydata = false;
-                if (getValueTask.IsFaulted)
-                {
-                    Debug.Log("Error getting data " + getValueTask.Exception);
-                }
-
-                if (getValueTask.IsCompleted)
-                {
-                    DataSnapshot snapshot = getValueTask.Result;
-                    Debug.Log(snapshot.Value.ToString());
-
-                    //snapshot object is casted to an instance of its type
-                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
-
-                    
-
-
-                    Debug.Log("Data received" + Time.time);
-                    displaydata = true;
-                    //    Debug.Log("Data received");
-
-                }
-
-
-            }
-            );
-        
-
-        yield return new WaitUntil(() => getdatatask.IsCompleted);
-
-        //the data has been saved to snapshot here
-        yield return StartCoroutine(displayDataEnemy());
-    }
-
-    IEnumerator displayDataEnemy()
-    {
-        foreach (var element in myDataDictionary)
+        else if ((x == Br1.name))
         {
-            Debug.Log(element.Key.ToString() + "<->" + element.Value.ToString());
-            if ((element.Key.ToString() == "PlayerName"))
-            {
-                Debug.Log("Reached");
-                otherPlayer.PlayerName = element.Value.ToString();
-
-            }
-            if ((element.Key.ToString() == "color"))
-            {
-                Debug.Log("Reached");
-                otherPlayer.color = element.Value.ToString();
-
-            }
-            if ((element.Key.ToString() == "isHisTurn"))
-            {
-                if (element.Value.ToString() == "true")
-                {
-                    otherPlayer.isHisTurn = true;
-                }
-                if (element.Value.ToString() == "false")
-                {
-                    otherPlayer.isHisTurn = false;
-                }
-
-            }
-            yield return new WaitForSeconds(1f);
+            name = Br1;
+        }
+        else if ((x == Br2.name))
+        {
+            name = Br2;
+        }
+        else if ((x == Bk1.name))
+        {
+            name = Bk1;
+        }
+        else if ((x == Bk2.name))
+        {
+            name = Bk2;
+        }
+        else if ((x == Bb1.name))
+        {
+            name = Bb1;
+        }
+        else if ((x == Bb2.name))
+        {
+            name = Bb2;
+        }
+        else if ((x == Bq.name))
+        {
+            name = Bq;
+        }
+        else if ((x == KingB.name))
+        {
+            name = KingB;
         }
 
-        yield return null;
-    }
+        //white pieces 
 
-    IEnumerator getDataFromFirebase(string childLabel)
-    {
-
-        Task getdatatask = reference.Child(childLabel).GetValueAsync().ContinueWithOnMainThread(
-            getValueTask =>
-            {
-                if (getValueTask.IsFaulted)
-                {
-                    Debug.Log("Error getting data " + getValueTask.Exception);
-                }
-
-                if (getValueTask.IsCompleted)
-                {
-                    DataSnapshot snapshot = getValueTask.Result;
-                    Debug.Log(snapshot.Value.ToString());
-
-                    //snapshot object is casted to an instance of its type
-                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
-
-
-                    //    Debug.Log("Data received");
-
-                }
-
-
-            }
-            );
-        //shock absorber
-        /* while (!displaydata)
-         {
-             //the data has NOT YET been saved to snapshot
-             yield return null;
-         }*/
-
-        yield return new WaitUntil(() => getdatatask.IsCompleted);
-
-        //the data has been saved to snapshot here
-        yield return StartCoroutine(displayData());
-    }
-
-    IEnumerator displayData()
-    {
-        foreach (var element in myDataDictionary)
+        else if ((x == Wr1.name))
         {
-            Debug.Log(element.Key.ToString() + "<->" + element.Value.ToString());
-            
-            yield return new WaitForSeconds(1f);
+            name = Wr1;
         }
-
-        yield return null;
-    }
-
-    public IEnumerator getOtherPlayerKey(Player otherPlayer, chessfirebase g)
-    {
-        Task getotherplayer = reference.GetValueAsync().ContinueWithOnMainThread(
-            getOtherPlayerTask =>
-            {
-                if (getOtherPlayerTask.IsFaulted)
-                {
-                    Debug.Log("Error getting data " + getOtherPlayerTask.Exception);
-                }
-                if (getOtherPlayerTask.IsCompleted)
-                {
-                    DataSnapshot snapshot = getOtherPlayerTask.Result;
-                    //Debug.Log(snapshot.Value.ToString());
-
-                    //snapshot object is casted to an instance of its type
-                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
-
-
-                }
-            }
-
-            );
-
-        //wait until I'm done.
-        yield return new WaitUntil(() => getotherplayer.IsCompleted);
-        //all the data inside mydatadictionary
-        //this gets me the second key (which is what I want)
-
-        foreach (var element in myDataDictionary)
+        else if ((x == Wr2.name))
         {
-            if (!(g.currentPlayerKey == element.Key.ToString()))
-            {
-
-                g.enemyPlayerKey = element.Key.ToString();
-            }
+            name = Wr2;
         }
-
-
-        //register shots listener
-
-
-        DatabaseReference enemyshotReference = reference.Child(g.enemyPlayerKey).Child("Shots");
-        DatabaseReference myshotReference = reference.Child(g.currentPlayerKey).Child("Shots");
-
-        //enemyshotReference.ChildAdded += (sender, args) => handleEnemyShot(sender, args, g);
-        //myshotReference.ChildChanged += (sender, args) => handleMyShot(sender, args, g);
-
-
-        //Debug.Log(myDataDictionary.Keys.ToList());
-
-    }
-
-
-    public IEnumerator BeginGame()
-    {
-
-
-        Debug.Log("game begin");
-
+        else if ((x == Wk1.name))
         {
-            yield return addPlayerToFirebase();
-            //myBoard = new chees(_allpeaces);
-
-            //yield return saveShips(this, myBoard);
+            name = Wk1;
         }
-        
-        if (starts)
+        else if ((x == Wk2.name))
         {
-            currentPlayer.isHisTurn = true;
-            while (true)
-            {
-
-                if (fillenemy == false)
-                {
-                    if (fillmine == false)
-                    {
-                        yield return getMineDataFromFirebase(currentPlayerKey);
-                        fillmine = true;
-                    }
-                    if (fillmine == true)
-                        yield return getEnemyDataFromFirebase(enemyPlayerKey);
-                        testbutton.SetActive(true);
-                    fillenemy = true;
-                }
-
-                if (currentPlayer.isHisTurn)
-                {
-                    Debug.Log("my turn!");
-                    turn = 1;
-                    if(coloradd == false)
-                    {
-                        yield return addColorForm("white");
-                        coloradd = true;
-                    }
-                    
-                    yield return null;
-                }
-                else
-                {
-                    Debug.Log("their turn!");
-                    yield return null;
-                }
-
-
-            }
+            name = Wk2;
         }
-        else
+        else if ((x == Wb1.name))
         {
-            while (true)
-            {
-
-                if (currentPlayer.isHisTurn)
-                {
-                    if (fillenemy == false)
-                    {
-                        if (fillmine == false) {
-                            yield return getMineDataFromFirebase(currentPlayerKey);
-                            fillmine = true;
-                        } if(fillmine == true)
-                        yield return getEnemyDataFromFirebase(enemyPlayerKey);
-                        fillenemy = true;
-                    }
-
-                    Debug.Log("nmy turn!");
-                    turn = 2;
-                    //if(mycolor == "white")
-                    //{
-
-                    //}else if(mycolor == "black")
-                    //{
-
-                    //}
-                    yield return null;
-                }
-                else
-                {
-                    Debug.Log("ntheir turn!");
-                    yield return null;
-                }
-
-
-            }
+            name = Wb1;
+        }
+        else if ((x == Wb2.name))
+        {
+            name = Wb2;
+        }
+        else if ((x == Wq.name))
+        {
+            name = Wq;
+        }
+        else if ((x == KingW.name))
+        {
+            name = KingW;
         }
 
 
 
-        yield return null;
-
-    }
-
-    IEnumerator waitForOtherPlayer()
-    {
-        Debug.Log("wait for other player");
-        yield return getNumberOfRecords();
-        playercounter = numberOfRecords;
-
-        while (playercounter < 2)
-        {
-            //first player to join starts
-            starts = true;
-
-            Debug.Log("Waiting for other player");
-            yield return getNumberOfRecords();
-            playercounter = numberOfRecords;
-
-
-            //lobby
-        }
-        //if another player joins the game can begin
-        Player otherPlayer = new Player();
-        //I need to get the key of the OTHER player
-
-        yield return getOtherPlayerKey(otherPlayer, this);
-
-        //I now have the other player's key.  Let's randomly choose whose turn is next. 
-        Debug.Log("other player has joined");
-
-        // session.isMyTurn = true;
-
-
-
-
-
-
-        yield return null;
-    }
-
-
-
-    IEnumerator addPlayerToFirebase()
-    {
-
-        Debug.Log("add Player To Firebase");
-        yield return initFirebase();
-        currentPlayer = new Player();
-
-
-
-        currentPlayer.PlayerName = "P" + pl;
-        currentPlayer.isHisTurn = true;
-        if(pl == 0)
-        {
-            checkcolor ="white";
-        }else if (pl == 1)
-        {
-            checkcolor = "black";
-        }
-        currentPlayer.color = checkcolor;
-        
-
-
-
-
-        //yield return dbScript.clearFirebase();
-
-
-        yield return addDataClassplayer(JsonUtility.ToJson(currentPlayer), this);
-
-        yield return waitForOtherPlayer();
-
-
-
-    }
-
-
-    public IEnumerator addDataClass(string datatoinsert, chessfirebase g)
-    {
-        if (star == false)
-        {
-            Debug.Log("add DataClass");
-            //create a unique ID
-            string newkey = reference.Push().Key;
-            Debug.Log(newkey);
-            //the key for the current player
-            g.currentPlayerKey = newkey;
-            //Update the unique key with the data I want to insert
-            star = true;
-            yield return StartCoroutine(updateDataClass(newkey, datatoinsert));
-        }
-    }
-
-    public IEnumerator addDataClassplayer(string datatoinsert, chessfirebase g)
-    {
-        if (star == false)
-        {
-            Debug.Log("add DataClass");
-            //create a unique ID
-            string newkey = reference.Push().Key;
-            Debug.Log(newkey);
-            myname = newkey;
-            //the key for the current player
-            g.currentPlayerKey = newkey;
-            //Update the unique key with the data I want to insert
-            star = true;
-            yield return StartCoroutine(updateDataClass(newkey, datatoinsert));
-        }
-    }
-
-
-    //public IEnumerator saveShips(chessfirebase g, chees f)
-    //{
-
-    //    string jsonBOARD = JsonUtility.ToJson(f);
-
-
-    //    Debug.Log(f.ToString());
-
-    //    Debug.Log(jsonBOARD);
-
-
-    //    //modified.  I don't really need a unique key for the ships.  Also makes it easier to get the list of ships from fleet.
-    //    Task addfleettask = reference.Child(g.currentPlayerKey).Child("pieces").SetRawJsonValueAsync(jsonBOARD);
-
-    //    yield return new WaitUntil(() => addfleettask.IsCompleted);
-    //}
-
-    IEnumerator addDataClass(string datatoinsert , string name)
-    {
-        //create a unique ID
-        
-        yield return StartCoroutine(updateDataClass(name, datatoinsert));
-
-    }
-
-
-
-    //public IEnumerator saveShips(gameManager g, Fleet f)
-    //{
-
-    //    string jsonfleet = JsonUtility.ToJson(f);
-
-
-    //    Debug.Log(f.ToString());
-
-    //    Debug.Log(jsonfleet);
-
-
-    //    //modified.  I don't really need a unique key for the ships.  Also makes it easier to get the list of ships from fleet.
-    //    Task addfleettask = reference.Child(g.currentPlayerKey).Child("Ships").SetRawJsonValueAsync(jsonfleet);
-
-    //    yield return new WaitUntil(() => addfleettask.IsCompleted);
-    //}
-
-
-
-    public IEnumerator getAllDataFromFirebase()
-    {
-        Debug.Log("get All Data From Firebase");
-        Task getdatatask = reference.GetValueAsync().ContinueWithOnMainThread(
-            getValueTask =>
-            {
-                if (getValueTask.IsFaulted)
-                {
-                    Debug.Log("Error getting data " + getValueTask.Exception);
-                }
-
-                if (getValueTask.IsCompleted)
-                {
-                    DataSnapshot snapshot = getValueTask.Result;
-                    //Debug.Log(snapshot.Value.ToString());
-
-                    //snapshot object is casted to an instance of its type
-                    myDataDictionary = (Dictionary<string, object>)snapshot.Value;
-
-
-                }
-
-
-            }
-            );
-
-
-        yield return new WaitUntil(() => getdatatask.IsCompleted);
-
-        //the data has been saved to snapshot here
-        yield return StartCoroutine(displayData());
-    }
-
-    IEnumerator getAllData()
-    {
-        Debug.Log("getAllData");
-        yield return getNumberOfRecords();
-        Debug.Log(numberOfRecords);
-
-
-
-        yield return getAllDataFromFirebase();
-
-        Debug.Log("All records retreived");
-
-        yield return null;
-    }
-
-    public IEnumerator initFirebase()
-    {
-        if (!signedin)
-        {
-            FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://chess-9c5ab-default-rtdb.europe-west1.firebasedatabase.app/");
-            reference = FirebaseDatabase.DefaultInstance.RootReference;
-            yield return signInToFirebase();
-            Debug.Log("Firebase Initialized!");
-            yield return true;
-            signedin = true;
-        }
-        else
-        {
-            yield return null;
-        }
-    }
-    public bool signedin = false;
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.Log(currentPlayerKey);
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-            if (hit.collider != null)
-            {
-                Debug.Log(hit.collider.gameObject.name);
-
-            }
-        }
+        return name;
     }
 }
