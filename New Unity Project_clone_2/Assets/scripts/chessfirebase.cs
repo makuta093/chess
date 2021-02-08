@@ -17,6 +17,8 @@ using System.IO;
 
 public class chessfirebase : MonoBehaviour
 {
+    public String NEWCOLOR;
+    public string turnCOLOR;
     public bool MOVED = false;
     public string move ;
     public bool l = false;
@@ -229,8 +231,7 @@ public class chessfirebase : MonoBehaviour
 
     public IEnumerator downloadAndSaveImage( string shape)
     {
-        Debug.Log("downloadAndSaveImage");
-        Debug.Log(shape);
+        
         string pathToSaveIn = Application.persistentDataPath;
 
         storage = FirebaseStorage.DefaultInstance;
@@ -325,6 +326,8 @@ public class chessfirebase : MonoBehaviour
             Wp7.color = false; Wp7.name = "Wp7"; Wp7.POSX = Wp7x; Wp7.POSY = Wp7y; Wp7.pieace = "Wp"; Wp7.live = true;
             makeTeams(Wp7);
             Wp8.color = false; Wp8.name = "Wp8"; Wp8.POSX = Wp8x; Wp8.POSY = Wp8y; Wp8.pieace = "Wp"; Wp8.live = true;
+            Debug.Log("Wp8.POSX " + Wp8.POSX);
+            Debug.Log("Wp8.POSY " + Wp8.POSY);
             makeTeams(Wp8);
 
             Br1.color = true; Br1.name = "Br1"; Br1.POSX = Br1x; Br1.POSY = Br1y; Br1.pieace = "Br"; Br1.live = true;
@@ -1041,7 +1044,7 @@ public class chessfirebase : MonoBehaviour
         Debug.Log("check_if_my_turn");
         foreach (var element in myDataDictionary)
         {
-            Debug.Log(element.Key.ToString()+"--"+ element.Value.ToString());
+            
             
             if (element.Key.ToString() == "Bb1")
             {
@@ -1266,111 +1269,115 @@ public class chessfirebase : MonoBehaviour
 
             if (element.Key.ToString() == "Bp1")
             {
-                Wp1.live = bool.Parse(element.Value.ToString());
+                Bp1.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp1x")
             {
-                Wp1.POSX = int.Parse(element.Value.ToString());
+                Bp1.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp1y")
             {
-                Wp1.POSY = int.Parse(element.Value.ToString());
+                Bp1.POSY = int.Parse(element.Value.ToString());
             }
 
             if (element.Key.ToString() == "Bp2")
             {
-                Wp2.live = bool.Parse(element.Value.ToString());
+                Bp2.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp2x")
             {
-                Wp2.POSX = int.Parse(element.Value.ToString());
+                Bp2.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp2y")
             {
-                Wp2.POSY = int.Parse(element.Value.ToString());
+                Bp2.POSY = int.Parse(element.Value.ToString());
             }
 
             if (element.Key.ToString() == "Bp3")
             {
-                Wp3.live = bool.Parse(element.Value.ToString());
+                Bp3.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp3x")
             {
-                Wp3.POSX = int.Parse(element.Value.ToString());
+                Bp3.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp3y")
             {
-                Wp3.POSY = int.Parse(element.Value.ToString());
+                Bp3.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Bp4")
             {
-                Wp4.live = bool.Parse(element.Value.ToString());
+                Bp4.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp4x")
             {
-                Wp4.POSX = int.Parse(element.Value.ToString());
+                Bp4.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp4y")
             {
-                Wp4.POSY = int.Parse(element.Value.ToString());
+                Bp4.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Bp5")
             {
-                Wp5.live = bool.Parse(element.Value.ToString());
+                Bp5.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp5x")
             {
-                Wp5.POSX = int.Parse(element.Value.ToString());
+                Bp5.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp5y")
             {
-                Wp5.POSY = int.Parse(element.Value.ToString());
+                Bp5.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Bp6")
             {
-                Wp6.live = bool.Parse(element.Value.ToString());
+                Bp6.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp6x")
             {
-                Wp6.POSX = int.Parse(element.Value.ToString());
+                Bp6.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp6y")
             {
-                Wp6.POSY = int.Parse(element.Value.ToString());
+                Bp6.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Bp7")
             {
-                Wp7.live = bool.Parse(element.Value.ToString());
+                Bp7.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp7x")
             {
-                Wp7.POSX = int.Parse(element.Value.ToString());
+                Bp7.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Bp7y")
             {
-                Wp7.POSY = int.Parse(element.Value.ToString());
+                Bp7.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Bp8")
             {
-                Wp8.live = bool.Parse(element.Value.ToString());
+                Bp8.live = bool.Parse(element.Value.ToString());
+                
             }
             if (element.Key.ToString() == "Bp8x")
             {
-                Wp8.POSX = int.Parse(element.Value.ToString());
+                Bp8.POSX = int.Parse(element.Value.ToString());
+                
             }
             if (element.Key.ToString() == "Bp8y")
             {
-                Wp8.POSY = int.Parse(element.Value.ToString());
+                Debug.Log(element.Key.ToString());
+                Bp8.POSY = int.Parse(element.Value.ToString());
+                Debug.Log("Wp8.POSY " + Wp8.POSY);
             }
 
 
@@ -1385,66 +1392,80 @@ public class chessfirebase : MonoBehaviour
             }
             if (element.Key.ToString() == "Wp1y")
             {
+                
                 Wp1.POSY = int.Parse(element.Value.ToString());
             }
 
             if (element.Key.ToString() == "Wp2")
             {
+                
                 Wp2.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp2x")
             {
+                
                 Wp2.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp2y")
             {
+                
                 Wp2.POSY = int.Parse(element.Value.ToString());
             }
 
             if (element.Key.ToString() == "Wp3")
             {
+               
                 Wp3.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp3x")
             {
+                
                 Wp3.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp3y")
             {
+                
                 Wp3.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Wp4")
             {
+                
                 Wp4.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp4x")
             {
+               
                 Wp4.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp4y")
             {
+               
                 Wp4.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Wp5")
             {
+                
                 Wp5.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp5x")
             {
+                
                 Wp5.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp5y")
             {
+                
                 Wp5.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Wp6")
             {
+                
                 Wp6.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp6x")
@@ -1453,50 +1474,82 @@ public class chessfirebase : MonoBehaviour
             }
             if (element.Key.ToString() == "Wp6y")
             {
+                
                 Wp6.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Wp7")
             {
+                
                 Wp7.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp7x")
             {
+                
                 Wp7.POSX = int.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp7y")
             {
+                
                 Wp7.POSY = int.Parse(element.Value.ToString());
             }
 
 
             if (element.Key.ToString() == "Wp8")
             {
+                
                 Wp8.live = bool.Parse(element.Value.ToString());
             }
             if (element.Key.ToString() == "Wp8x")
             {
+                
                 Wp8.POSX = int.Parse(element.Value.ToString());
+                Debug.Log("Wp8.POSX " + Wp8.POSX);
             }
             if (element.Key.ToString() == "Wp8y")
             {
+                
                 Wp8.POSY = int.Parse(element.Value.ToString());
+                Debug.Log("Wp8.POSY " + Wp8.POSY);
             }
             if (element.Key.ToString() == "turn")
             {
-                Debug.Log("trun");
+                Debug.Log(element.Key.ToString() + "--" + element.Value.ToString());
+                
                 if (element.Value.ToString() == currentPlayer.color)
                 {
-                    Debug.Log("enter");
-                    make = "eneter";
-                    myturn = true;
+                    if (NEWCOLOR != element.Value.ToString())
+                    {
+                        turnCOLOR = element.Value.ToString();
+                        Debug.Log("enter");
+                        make = "eneter";
+                        myturn = true;
+                    }
+                    else
+                    {
+                        
+                        Debug.Log("false");
+                        make = "waiting poggers";
+                        myturn = false;
+                    }
                 }
                 else
-                {
-                    Debug.Log("false");
-                    make = "false";
-                    myturn = false;
+                {if (NEWCOLOR != element.Value.ToString())
+                    {
+                        turnCOLOR = element.Value.ToString();
+                        NEWCOLOR = element.Value.ToString();
+                        Debug.Log("false");
+                        make = "false";
+                        myturn = false;
+                    }
+                    else
+                    {
+                        NEWCOLOR = element.Value.ToString();
+                        Debug.Log("false");
+                        make = "waiting poggers";
+                        myturn = false;
+                    }
                 }
             }
             new WaitForSeconds(1f);
@@ -1638,37 +1691,38 @@ public class chessfirebase : MonoBehaviour
 
 
     IEnumerator addPlayerToFirebase()
-    {
-        if (myturn == false)
-        {
-            Debug.Log("add Player To Firebase");
-            yield return initFirebase();
-            currentPlayer = new Player();
-
-
-
-            currentPlayer.PlayerName = "P" + pl;
-            Debug.Log(currentPlayer.PlayerName);
-            currentPlayer.isHisTurn = true;
-            Debug.Log(currentPlayer.isHisTurn);
-            if (pl == 0)
+    {if(pl < 3) {
+            if (myturn == false)
             {
-                checkcolor = "white";
+                Debug.Log("add Player To Firebase");
+                yield return initFirebase();
+                currentPlayer = new Player();
+
+
+
+                currentPlayer.PlayerName = "P" + pl;
+                Debug.Log(currentPlayer.PlayerName);
+                currentPlayer.isHisTurn = true;
+                Debug.Log(currentPlayer.isHisTurn);
+                if (pl == 0)
+                {
+                    checkcolor = "white";
+                }
+                else if (pl == 1)
+                {
+                    checkcolor = "black";
+                }
+                currentPlayer.color = checkcolor;
+                Debug.Log(currentPlayer.color);
+
+
+
+
+                //yield return dbScript.clearFirebase();
+
+                myturn = true;
+                yield return addDataClassplayer(JsonUtility.ToJson(currentPlayer), this);
             }
-            else if (pl == 1)
-            {
-                checkcolor = "black";
-            }
-            currentPlayer.color = checkcolor;
-            Debug.Log(currentPlayer.color);
-
-
-
-
-            //yield return dbScript.clearFirebase();
-
-            myturn = true;
-            yield return addDataClassplayer(JsonUtility.ToJson(currentPlayer), this);
         }
         yield return waitForOtherPlayer();
 
@@ -1798,13 +1852,6 @@ public class chessfirebase : MonoBehaviour
     void Update()
     {
         Debug.Log(currentPlayer.color);
-        if(currentPlayer.color == "white")
-        {
-            mycollor = false;
-        }else if (currentPlayer.color == "black")
-        {
-            mycollor = true;
-        }
         Debug.Log(currentPlayerKey);
         if ((myturn == true)&&(make == "eneter"))
         {
@@ -1830,8 +1877,9 @@ public class chessfirebase : MonoBehaviour
                         if(l == true)
                         {
                             too = k;
+                            MOVED = false;
+                            
                             jj = false;
-                            make = "poggers";
                             movell(move, too, jj);
                         }
                     }
@@ -1863,7 +1911,8 @@ public class chessfirebase : MonoBehaviour
                                 Debug.Log("enter r");
                                 Debug.Log(mycollor + " " + g.color);
                                 too = g.name;
-                                l = true;
+                            MOVED = false;
+                            
                             jj = true;
                             make = "poggers";
                             movell(move, too, jj);
@@ -1877,8 +1926,9 @@ public class chessfirebase : MonoBehaviour
 
     public void move_boxes()
     {
-        MOVED = true;
+        make.Equals("poggers");
 
+        MOVED = true;
         //BLACK PAWNS
         GameObject Bp1OBJ = GameObject.Find("Bp1");
         GameObject Bp1_location = GameObject.Find(Bp1.POSY+","+ Bp1.POSX);
@@ -1943,7 +1993,9 @@ public class chessfirebase : MonoBehaviour
         Wp7OBJ.transform.position = Wp7_location.transform.position;
 
         GameObject Wp8OBJ = GameObject.Find("Wp8");
+        Debug.Log("Wp8");
         GameObject Wp8_location = GameObject.Find(Wp8.POSY + "," + Wp8.POSX);
+        Debug.Log(Wp8.POSY + "," + Wp8.POSX);
         Wp8OBJ.transform.position = Wp8_location.transform.position;
 
         //BLACK PEACES
@@ -2017,9 +2069,15 @@ public class chessfirebase : MonoBehaviour
 
     public void movell(string move, string too, bool jj)
     {
+        NEWCOLOR = turnCOLOR;
+        Debug.Log("move "+move);
+        Debug.Log("too "+too);
+        MOVED = false;
+        Debug.Log("MOVED " + MOVED);
         Debug.Log("movell");
         if(jj == true)
         {
+            l = false;
             Debug.Log("JJ "+jj);
             int tt = 0;
             int rr = 0;
@@ -2180,9 +2238,13 @@ public class chessfirebase : MonoBehaviour
             else if (too == "Wp8")
             {
                 rr = Wp8.POSX;
+                Debug.Log("Wp8 rr " + rr);
                 tt = Wp8.POSY;
+                Debug.Log("Wp8 tt " + tt);
                 Wp8.POSY = 0;
+                Debug.Log("Wp8 Wp8.POSY " + Wp8.POSY);
                 Wp8.POSX = 0;
+                Debug.Log("Wp8 Wp8.POSX " + Wp8.POSX);
                 Wp8.live = false;
                 Debug.Log(Wp8.POSY);
                 Debug.Log(Wp8.POSX);
@@ -2192,6 +2254,8 @@ public class chessfirebase : MonoBehaviour
             //BLACK PEACES
             else if (too == "Br1")
             {
+                rr = Br1.POSX;
+                tt = Br1.POSY;
                 Br1.POSY = 0;
                 Br1.POSX = 0;
                 Br1.live = false;
@@ -2200,6 +2264,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Br2")
             {
+                rr = Br2.POSX;
+                tt = Br2.POSY;
                 Br2.POSY = 0;
                 Br2.POSX = 0;
                 Br2.live = false;
@@ -2208,6 +2274,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Bk1")
             {
+                rr = Bk1.POSX;
+                tt = Bk1.POSY;
                 Bk1.POSY = 0;
                 Bk1.POSX = 0;
                 Bk1.live = false;
@@ -2216,6 +2284,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Bk2")
             {
+                rr = Bk2.POSX;
+                tt = Bk2.POSY;
                 Bk2.POSY = 0;
                 Bk2.POSX = 0;
                 Bk2.live = false;
@@ -2224,6 +2294,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Bb1")
             {
+                rr = Bb1.POSX;
+                tt = Bb1.POSY;
                 Bb1.POSY = 0;
                 Bb1.POSX = 0;
                 Bb1.live = false;
@@ -2232,6 +2304,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Bb2")
             {
+                rr = Bb2.POSX;
+                tt = Bb2.POSY;
                 Bb2.POSY = 0;
                 Bb2.POSX = 0;
                 Bb2.live = false;
@@ -2240,6 +2314,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Bq")
             {
+                rr = Bq.POSX;
+                tt = Bq.POSY;
                 Bq.POSY = 0;
                 Bq.POSX = 0;
                 Bq.live = false;
@@ -2248,6 +2324,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "KingB")
             {
+                rr = KingB.POSX;
+                tt = KingB.POSY;
                 KingB.POSY = 0;
                 KingB.POSX = 0;
                 KingB.live = false;
@@ -2258,6 +2336,8 @@ public class chessfirebase : MonoBehaviour
             //BLACK PEACES
             else if (too == "Wr1")
             {
+                rr = Wr1.POSX;
+                tt = Wr1.POSY;
                 Wr1.POSY = 0;
                 Wr1.POSX = 0;
                 Wr1.live = false;
@@ -2266,6 +2346,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Br2")
             {
+                rr = Br2.POSX;
+                tt = Br2.POSY;
                 Br2.POSY = 0;
                 Br2.POSX = 0;
                 Br2.live = false;
@@ -2274,6 +2356,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Wk1")
             {
+                rr = Wk1.POSX;
+                tt = Wk1.POSY;
                 Wk1.POSY = 0;
                 Wk1.POSX = 0;
                 Wk1.live = false;
@@ -2282,6 +2366,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Wk2")
             {
+                rr = Wk2.POSX;
+                tt = Wk2.POSY;
                 Wk2.POSY = 0;
                 Wk2.POSX = 0;
                 Wk2.live = false;
@@ -2290,6 +2376,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Wb1")
             {
+                rr = Wb1.POSX;
+                tt = Wb1.POSY;
                 Wb1.POSY = 0;
                 Wb1.POSX = 0;
                 Wb1.live = false;
@@ -2298,6 +2386,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Wb2")
             {
+                rr = Wb2.POSX;
+                tt = Wb2.POSY;
                 Wb2.POSY = 0;
                 Wb2.POSX = 0;
                 Wb2.live = false;
@@ -2306,6 +2396,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "Wq")
             {
+                rr = Wq.POSX;
+                tt = Wq.POSY;
                 Wq.POSY = 0;
                 Wq.POSX = 0;
                 Wq.live = false;
@@ -2314,6 +2406,8 @@ public class chessfirebase : MonoBehaviour
             }
             else if (too == "KingW")
             {
+                rr = KingW.POSX;
+                tt = KingW.POSY;
                 KingW.POSY = 0;
                 KingW.POSX = 0;
                 KingW.live = false;
@@ -2434,7 +2528,9 @@ public class chessfirebase : MonoBehaviour
             else if (move == "Wp8")
             {
                 Wp8.POSY = tt;
+                Debug.Log("WP8 TT " + tt);
                 Wp8.POSX = rr;
+                Debug.Log("WP8 RR " + rr);
                 Debug.Log("SARTING COLOR");
                 StartCoroutine(addColorForm(otherPlayer.color));
             }
@@ -2713,7 +2809,9 @@ public class chessfirebase : MonoBehaviour
             else if (move == "Wp8")
             {
                 Wp8.POSY = tt;
+                Debug.Log("WP8 TT " + tt);
                 Wp8.POSX = rr;
+                Debug.Log("WP8 RR " + rr);
                 Debug.Log("SARTING COLOR");
                 StartCoroutine(addColorForm(otherPlayer.color));
             }
